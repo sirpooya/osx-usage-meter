@@ -206,14 +206,36 @@ enum ClaudeCodeKeychain {
         expiresAt: Date?,
         to credentials: ClaudeCodeCredentials
     ) -> Bool {
+        writeBackByService(
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+            expiresAt: expiresAt,
+            service: credentials.serviceName,
+            account: credentials.accountName
+        )
+    }
+
+    /// The same write-back, addressed by service and account rather than by a credentials struct.
+    ///
+    /// The mirrored path (`ClaudeTokenMirror`) refreshes without ever reading Claude Code's item,
+    /// so it holds only the origin service and account names, not a full `ClaudeCodeCredentials`.
+    /// - Returns: whether the write succeeded (a failure is not fatal, the caller only logs it)
+    @discardableResult
+    static func writeBackByService(
+        accessToken: String,
+        refreshToken: String,
+        expiresAt: Date?,
+        service: String,
+        account: String
+    ) -> Bool {
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: credentials.serviceName,
+            kSecAttrService as String: service,
             kSecMatchLimit as String: kSecMatchLimitOne,
             kSecReturnData as String: true
         ]
-        if !credentials.accountName.isEmpty {
-            query[kSecAttrAccount as String] = credentials.accountName
+        if !account.isEmpty {
+            query[kSecAttrAccount as String] = account
         }
 
         // Read the current content first, keeping the other fields inside and outside claudeAiOauth
@@ -238,10 +260,10 @@ enum ClaudeCodeKeychain {
 
         var updateQuery: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: credentials.serviceName
+            kSecAttrService as String: service
         ]
-        if !credentials.accountName.isEmpty {
-            updateQuery[kSecAttrAccount as String] = credentials.accountName
+        if !account.isEmpty {
+            updateQuery[kSecAttrAccount as String] = account
         }
 
         let updateStatus = SecItemUpdate(

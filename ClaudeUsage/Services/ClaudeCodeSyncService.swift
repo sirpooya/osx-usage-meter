@@ -152,6 +152,9 @@ final class ClaudeCodeSyncService: ObservableObject {
         state = .notSynced
         lastSyncedAt = nil
         UserDefaults.standard.removeObject(forKey: Self.lastSyncedAtKey)
+        // Our own mirrored copy of the tokens has to go with the account, or it would keep serving
+        // polls for an account the user just removed. Claude Code's own entry is still untouched.
+        ClaudeTokenMirror.clear()
         Logger.settings.notice("CLI sync: removed the synced account (the Claude Code keychain item was left untouched)")
     }
 

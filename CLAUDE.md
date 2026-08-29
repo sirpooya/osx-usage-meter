@@ -99,8 +99,9 @@ security find-generic-password -s "Claude Code-credentials" -w
 Returns JSON; the token is at `.claudeAiOauth.accessToken` (also `refreshToken`, `expiresAt`).
 `~/.claude/.credentials.json` does **not** exist on macOS (that path is Linux/Windows only).
 Access tokens expire ~60 min; refresh via the OAuth refresh token, and expect Claude Code itself
-to rotate the Keychain entry underneath us. Re-read the Keychain on every poll, never cache the
-token in memory across polls.
+to rotate the Keychain entry underneath us. **Do not read Claude Code's entry on the poll path**:
+that read is what raises the authorization prompt. Mirror it once into our own Keychain item and
+serve polls from there. See "Keychain prompt on every poll" below.
 
 Response shape (verified):
 
@@ -307,6 +308,9 @@ What has been changed from upstream so far:
       tight enough that the two read as one phrase. Horizontal only, so it costs `PopoverMetrics`
       nothing; the 5pt label-to-bar gap and the 12pt row spacing are unchanged, and the row height
       that `PopoverMetrics` assumes still holds.
+    - A middot separates the two ("5-Hour Limit · 1h left"). It is secondary at `labelSize`,
+      the countdown's own colour, and sits inside the countdown's `TimelineView` rather than next
+      to the title, so a limit with no countdown does not print a trailing dot.
   - Bar colour still comes from the per-limit palette in `UsageColorScheme` and still escalates
     with the percentage, so the colour says both which limit it is and how close it is.
   - `showRemainingMode` now defaults to **true**, so rows read "2d 7h left", not "Aug 24 2 AM".
@@ -983,6 +987,56 @@ kept. `swift test` still passes 128/128.
 
 Still upstream's, still Chinese: `scripts/build.sh` and parts of `README.md`, `CHANGELOG.md`,
 `docs/`, and `website/`.
+
+## Keychain prompt on every poll
+
+Symptom: the Keychain password prompt appears while nobody is touching the app, sometimes hourly,
+just to refresh a menu bar percentage.
+
+Cause, in two halves:
+
+1. Reading a Keychain item another app created needs an ACL grant, and `fetchCLISyncedUsage`
+   read Claude Code's `Claude Code-credentials` item on **every poll** (60s active, 5-10 min idle).
+2. Clicking "Always Allow" adds this app to that item's ACL, but the grant does not survive.
+   Claude Code rewrites its own item whenever it rotates a token, and a rewrite resets the ACL.
+
+Measured on this machine 2026-08-29: that item's ACL held **108 application entries, 102 of them
+dead `cdhash` requirements** (`status -2147415734`, `errSecCSNoMatch`), one per ad hoc signed build
+ever granted before the signing fix. The correct identity based entry was present but sat among
+102 failing checks. Signing correctly (see "Gotchas") is necessary but was never sufficient: it
+stops *new* debris, it does not stop the CLI's rewrites from clearing the grant.
+
+Fix: **stop reading their item on the hot path.** `Services/ClaudeTokenMirror.swift` keeps our own
+copy of the tokens in a Keychain item this app creates, service
+`com.claudeusage.ClaudeUsage.tokens`. An item we create has us in its ACL from birth and no other
+process rewrites it, so reading it never prompts. Verified: its ACL has exactly **one** application
+entry, `(OK)`, against Claude Code's 108.
+
+The poll path in `ClaudeAPIService` is now:
+
+- `ClaudeTokenMirror.load()` first. Usable access token, use it. This is the common case and it
+  touches only our own item.
+- Expired: refresh from the **mirror's own** refresh token, still without reading Claude Code's
+  item, then update both our item and theirs.
+- Only when that refresh fails do we fall back to `fetchUsingCLIKeychain`, which reads Claude
+  Code's entry (and may prompt once) and re-mirrors. That means the user signed out and back in on
+  the CLI, which is rare.
+
+Things to keep, or the prompt comes back:
+
+- **The write-back to Claude Code's item stays mandatory.** A refresh token is single use, so once
+  we spend it their copy is dead and the user gets logged out of their own terminal. Writing does
+  not prompt; only reading does. `writeBackByService` exists because the mirrored path holds only
+  the origin service and account names, not a full `ClaudeCodeCredentials`.
+- **`ClaudeTokenMirror` deliberately does not go through `KeychainManager`.** That class swaps in a
+  plaintext `UserDefaults` backend under `#if DEBUG`, which is fine for an org id and not for a
+  live OAuth token. The mirror writes to the real Keychain in every configuration.
+- `removeSync()` calls `ClaudeTokenMirror.clear()`, or the mirror keeps serving polls for an
+  account the user just removed.
+
+Still worth doing by hand: the 102 stale `cdhash` entries on Claude Code's item are inert but
+untidy. Pruning them needs the Keychain password (Keychain Access > that item > Access Control),
+and nothing in the app depends on it now that the hot path avoids that item entirely.
 
 ## Menu bar icon colour modes
 

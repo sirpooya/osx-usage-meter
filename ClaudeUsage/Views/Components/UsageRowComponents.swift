@@ -164,13 +164,23 @@ struct UsageLimitBarRow: View {
                     .layoutPriority(1)
 
                 // The countdown sits with the title rather than out on the right edge, so the row
-                // reads as one phrase ("5-Hour Limit, 26m left") and the percentage stands alone.
+                // reads as one phrase ("5-Hour Limit . 26m left") and the percentage stands alone.
+                // The dot takes the countdown's secondary colour: it belongs to the countdown side
+                // of the phrase, not to the title, and it disappears with the countdown.
                 // TimelineView refreshes it at minute granularity itself (minute precision is all it needs, so 60s is enough)
                 TimelineView(.periodic(from: .now, by: 60)) { _ in
-                    Text(trailing())
-                        .font(.system(size: Self.labelSize))
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
+                    let countdown = trailing()
+                    if !countdown.isEmpty {
+                        HStack(alignment: .firstTextBaseline, spacing: 4) {
+                            Text(verbatim: "\u{00B7}")
+                                .font(.system(size: Self.labelSize))
+                                .foregroundColor(.secondary)
+                            Text(countdown)
+                                .font(.system(size: Self.labelSize))
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                        }
+                    }
                 }
 
                 Spacer(minLength: 8)

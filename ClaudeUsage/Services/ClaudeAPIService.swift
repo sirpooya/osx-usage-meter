@@ -486,42 +486,147 @@ class ClaudeAPIService {
         // Reading the Keychain can raise a system authorization prompt, so it must not hold the main thread
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self else { return }
-            guard let credentials = ClaudeCodeSyncService.currentCredentials(preferredService: preferredService) else {
-                Logger.api.error("CLI sync: keychain credentials are no longer readable")
-                DispatchQueue.main.async { completion(.failure(UsageError.noCredentials)) }
-                return
-            }
 
-            // The entry carries the subscription type, so the popover title can read "Claude Team".
-            // Refreshed here rather than only at sync time, so an account that synced before this
-            // existed, or one whose plan changed, still ends up with the right tier.
-            if !credentials.subscriptionType.isEmpty {
-                DispatchQueue.main.async {
-                    UserSettings.shared.claudeSubscriptionTier = credentials.subscriptionType
-                }
-            }
+            // Prefer our own mirrored item, which never prompts because this app created it.
+            // Claude Code's item is only read when we have no mirror yet, or when the mirror's
+            // refresh_token has stopped working. See ClaudeTokenMirror for why.
+            if let mirrored = ClaudeTokenMirror.load() {
+                self.publishTier(mirrored.subscriptionType)
 
-            // The access_token is still valid: use it and leave the refresh_token alone
-            if credentials.isAccessTokenUsable {
-                self.fetchClaudeOAuthUsageData(
-                    accessToken: credentials.accessToken,
-                    retryOnUnauthorized: retryOnUnauthorized,
-                    completion: completion
-                )
-                return
-            }
-
-            self.refreshCLISyncedToken(credentials: credentials) { result in
-                switch result {
-                case .failure(let error):
-                    DispatchQueue.main.async { completion(.failure(error)) }
-                case .success(let accessToken):
+                if mirrored.isAccessTokenUsable {
                     self.fetchClaudeOAuthUsageData(
-                        accessToken: accessToken,
+                        accessToken: mirrored.accessToken,
                         retryOnUnauthorized: retryOnUnauthorized,
                         completion: completion
                     )
+                    return
                 }
+
+                // Expired: refresh from the mirror's own refresh_token, still without reading
+                // Claude Code's item. Only a refresh failure sends us back to the CLI entry,
+                // because that means our copy is genuinely dead rather than merely stale.
+                self.refreshMirroredToken(mirrored) { result in
+                    switch result {
+                    case .success(let accessToken):
+                        self.fetchClaudeOAuthUsageData(
+                            accessToken: accessToken,
+                            retryOnUnauthorized: retryOnUnauthorized,
+                            completion: completion
+                        )
+                    case .failure:
+                        Logger.api.notice("Token mirror: refresh failed, falling back to the Claude Code keychain item")
+                        self.fetchUsingCLIKeychain(
+                            preferredService: preferredService,
+                            retryOnUnauthorized: retryOnUnauthorized,
+                            completion: completion
+                        )
+                    }
+                }
+                return
+            }
+
+            self.fetchUsingCLIKeychain(
+                preferredService: preferredService,
+                retryOnUnauthorized: retryOnUnauthorized,
+                completion: completion
+            )
+        }
+    }
+
+    /// Push the subscription type to the popover title ("Claude Team"), on the main thread.
+    private func publishTier(_ tier: String) {
+        guard !tier.isEmpty else { return }
+        DispatchQueue.main.async {
+            UserSettings.shared.claudeSubscriptionTier = tier
+        }
+    }
+
+    /// The original path: read Claude Code's own Keychain item, and mirror whatever comes back.
+    ///
+    /// This is the call that can raise the authorization prompt, so it is now reached only on a
+    /// cold start or after our mirrored refresh_token has died, rather than on every poll.
+    private func fetchUsingCLIKeychain(
+        preferredService: String?,
+        retryOnUnauthorized: Bool,
+        completion: @escaping (Result<UsageData, Error>) -> Void
+    ) {
+        guard let credentials = ClaudeCodeSyncService.currentCredentials(preferredService: preferredService) else {
+            Logger.api.error("CLI sync: keychain credentials are no longer readable")
+            DispatchQueue.main.async { completion(.failure(UsageError.noCredentials)) }
+            return
+        }
+
+        // The entry carries the subscription type, so the popover title can read "Claude Team".
+        // Refreshed here rather than only at sync time, so an account that synced before this
+        // existed, or one whose plan changed, still ends up with the right tier.
+        publishTier(credentials.subscriptionType)
+
+        // Mirror straight away, so the next poll does not have to come back here.
+        ClaudeTokenMirror.save(from: credentials)
+
+        // The access_token is still valid: use it and leave the refresh_token alone
+        if credentials.isAccessTokenUsable {
+            fetchClaudeOAuthUsageData(
+                accessToken: credentials.accessToken,
+                retryOnUnauthorized: retryOnUnauthorized,
+                completion: completion
+            )
+            return
+        }
+
+        refreshCLISyncedToken(credentials: credentials) { result in
+            switch result {
+            case .failure(let error):
+                DispatchQueue.main.async { completion(.failure(error)) }
+            case .success(let accessToken):
+                self.fetchClaudeOAuthUsageData(
+                    accessToken: accessToken,
+                    retryOnUnauthorized: retryOnUnauthorized,
+                    completion: completion
+                )
+            }
+        }
+    }
+
+    /// Refresh using the mirrored refresh_token, updating both our item and Claude Code's.
+    ///
+    /// The write-back to Claude Code's item matters for the same reason it always did: a
+    /// refresh_token is single use, so once we spend it the CLI's copy is dead and the user would
+    /// be logged out of their own terminal. That write does not prompt (writing is not reading).
+    private func refreshMirroredToken(
+        _ mirrored: ClaudeTokenMirror.Mirrored,
+        completion: @escaping (Result<String, Error>) -> Void
+    ) {
+        guard !mirrored.refreshToken.isEmpty else {
+            completion(.failure(UsageError.unauthorized))
+            return
+        }
+
+        ClaudeOAuthService.refresh(refreshToken: mirrored.refreshToken) { result in
+            switch result {
+            case .failure(let error):
+                Logger.api.error("Token mirror: refresh failed \(error.localizedDescription)")
+                completion(.failure(error))
+            case .success(let tokens):
+                let rotated = tokens.refreshToken.isEmpty ? mirrored.refreshToken : tokens.refreshToken
+                ClaudeTokenMirror.updateTokens(
+                    accessToken: tokens.accessToken,
+                    refreshToken: rotated,
+                    expiresAt: tokens.expiresAt
+                )
+                ClaudeCodeKeychain.writeBackByService(
+                    accessToken: tokens.accessToken,
+                    refreshToken: rotated,
+                    expiresAt: tokens.expiresAt,
+                    service: mirrored.originService,
+                    account: mirrored.originAccount
+                )
+                if rotated != mirrored.refreshToken {
+                    DispatchQueue.main.async {
+                        UserSettings.shared.silentlyUpdateCurrentClaudeSessionToken(rotated)
+                    }
+                }
+                completion(.success(tokens.accessToken))
             }
         }
     }
