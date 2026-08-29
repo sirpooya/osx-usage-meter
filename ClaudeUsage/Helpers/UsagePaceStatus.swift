@@ -28,10 +28,12 @@ enum UsagePaceStatus: Int, Comparable, CaseIterable {
 
     /// Below this much of the window elapsed there is nothing worth projecting from.
     ///
-    /// Much lower than `UsagePaceCalculator.minimumElapsedFraction` (15%) on purpose. That gate
-    /// protects the bar's own colour, which turning red seconds into a window would misreport;
-    /// this one only tints a 2pt tick, so an early reading is cheap and useful.
-    static let minimumElapsedFraction: Double = 0.03
+    /// Deliberately the same 15% as `UsagePaceCalculator.minimumElapsedFraction`, not lower. It
+    /// used to be 3%, justified by this ramp only tinting a 2pt tick; that stopped being true
+    /// once Usage mode took over the bars and the menu bar icons. At 3% a five hour window is
+    /// projectable nine minutes in, so 9% used read as 180% of cap and painted a barely started
+    /// window red. One early request divided by a tiny elapsed fraction is not a pace.
+    static let minimumElapsedFraction: Double = UsagePaceCalculator.minimumElapsedFraction
 
     /// Pace step from the usage so far and how much of the window has gone.
     /// nil when the window has barely started or has already lapsed, in which case callers leave

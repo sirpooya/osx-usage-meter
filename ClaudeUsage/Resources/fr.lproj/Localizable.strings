@@ -141,10 +141,10 @@
 
 /* The three mutually exclusive bar / icon coloring modes */
 "display.color_mode" = "Couleur selon";
-"display.color_mode_type" = "Limite";
+"display.color_mode_type" = "Catégorie";
 "display.color_mode_usage" = "Utilisation";
 "display.color_mode_monochrome" = "Monochrome";
-"display.color_mode_type_desc" = "Chaque limite garde sa propre couleur, qui s'intensifie à l'approche du plafond.";
+"display.color_mode_type_desc" = "Chaque limite garde sa propre couleur, si bien que la couleur indique de quelle limite il s'agit.";
 "display.color_mode_usage_desc" = "Bleu, orange puis rouge selon le rythme projeté, pour qu'une barre alerte quand vous êtes en avance sur l'horloge.";
 "display.color_mode_monochrome_desc" = "Une couleur adaptative assortie à la barre de menus, au lieu des couleurs d'état.";
 

@@ -141,10 +141,10 @@
 
 /* The three mutually exclusive bar / icon coloring modes */
 "display.color_mode" = "색상 기준";
-"display.color_mode_type" = "한도";
+"display.color_mode_type" = "카테고리";
 "display.color_mode_usage" = "사용량";
 "display.color_mode_monochrome" = "단색";
-"display.color_mode_type_desc" = "각 한도가 고유한 색을 유지하며, 한도에 가까워질수록 진해집니다.";
+"display.color_mode_type_desc" = "각 한도가 고유한 색을 유지하므로, 색이 해당 막대가 어떤 한도인지를 나타냅니다.";
 "display.color_mode_usage_desc" = "예상 속도에 따라 파랑, 주황, 빨강으로 바뀌어 시간보다 빠르게 쓰고 있을 때 경고합니다.";
 "display.color_mode_monochrome_desc" = "상태 색상 대신 메뉴 바에 맞는 단일 적응형 색상을 사용합니다.";
 

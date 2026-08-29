@@ -141,10 +141,10 @@
 
 /* The three mutually exclusive bar / icon coloring modes */
 "display.color_mode" = "着色依据";
-"display.color_mode_type" = "限额";
+"display.color_mode_type" = "类别";
 "display.color_mode_usage" = "用量";
 "display.color_mode_monochrome" = "单色";
-"display.color_mode_type_desc" = "每个限额保持各自的颜色，越接近上限颜色越深。";
+"display.color_mode_type_desc" = "每个限额保持各自的颜色，因此颜色表示这是哪个限额。";
 "display.color_mode_usage_desc" = "按预计速度显示蓝色、橙色再到红色，当用量快于时间进度时进度条会提示。";
 "display.color_mode_monochrome_desc" = "使用与菜单栏匹配的单一自适应颜色，而非状态颜色。";
 

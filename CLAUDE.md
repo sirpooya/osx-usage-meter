@@ -18,7 +18,9 @@ Non-negotiable. A build that only exists in DerivedData is useless.
 ```bash
 pkill -f "ClaudeUsage.app/Contents/MacOS/ClaudeUsage"
 xcodebuild -project ClaudeUsage.xcodeproj -scheme ClaudeUsage -configuration Debug \
-  -derivedDataPath <scratch>/dd build CODE_SIGN_IDENTITY="-"
+  -derivedDataPath <scratch>/dd build \
+  CODE_SIGN_IDENTITY="Apple Development: pooyak@live.com (FTQDQPMU3H)" \
+  CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER="" DEVELOPMENT_TEAM=""
 rm -rf /Applications/ClaudeUsage.app
 cp -R <scratch>/dd/Build/Products/Debug/ClaudeUsage.app /Applications/ClaudeUsage.app
 codesign -v --strict /Applications/ClaudeUsage.app      # do NOT re-sign, see gotchas
@@ -28,6 +30,22 @@ pgrep -lf "/Applications/ClaudeUsage.app"   # confirm it actually came up
 ```
 
 Gotchas that cost time already:
+- **Sign with the Apple Development identity, not ad hoc**, or the Keychain prompt
+  ("ClaudeUsage wants to use your confidential information stored in Claude Code-credentials")
+  comes back after every single build. Ad hoc signing makes the app's designated requirement a
+  raw `cdhash H"..."`, and that is what Keychain Access stores in the item's ACL when you click
+  Always Allow. A rebuild is a new cdhash, so the grant no longer matches anything and macOS asks
+  again. Signing with the identity gives an identity-based requirement instead
+  (`identifier "com.claudeusage.ClaudeUsage" and anchor apple generic and certificate
+  leaf[subject.CN] = "Apple Development: ..."`), which survives rebuilds, so Always Allow sticks.
+  Verify with `codesign -d -r- /Applications/ClaudeUsage.app`: if the last line says `cdhash`, the
+  prompt will be back next build. `CODE_SIGN_STYLE=Manual` plus the two empty overrides is what
+  keeps Xcode from demanding a provisioning profile. Entitlements are unaffected, still
+  `app-sandbox = false`.
+- The prompt also appears **while you are doing nothing**, which is not a second bug:
+  `ClaudeAPIService.fetchCLISyncedUsage` deliberately re-reads the Keychain on every poll (60s
+  active, up to 5-10 min idle), so any lost grant is re-asked on the poll timer rather than on
+  your next click. Claude Code rotating its own entry can also reset the ACL mid-session.
 - Do not launch the binary directly from a backgrounded shell. The process dies when that
   shell exits, which looks exactly like a crash in the log.
 - To screenshot a window, get its id from `CGWindowListCopyWindowInfo` and use
@@ -775,6 +793,14 @@ What has been changed from upstream so far:
     versus *how fast* it is being spent, so the first segment names the limit. Only the
     `display.color_mode_type` value changed (Limit / Limit / Limite / 上限 / 한도 / 限额 / 限額);
     the key, `L.Display.colorModeType` and the `ColorMode.limitType` case all keep their names.
+  - **The first segment is now Category** (Category / Kategorie / Catégorie / カテゴリ / 카테고리 /
+    类别 / 類別), for the same reason "Type" was rejected: it names the axis rather than the thing.
+    Key, `L.Display.colorModeType` and `ColorMode.limitType` still unchanged.
+  - **Its description was stale and said the opposite of what the mode does.** It still read
+    "Each limit keeps its own color, deepening as it approaches its cap", written before the
+    per-limit palettes were flattened to `UsageColorScheme.flatPercentage`. Nothing deepens in
+    this mode any more, so `display.color_mode_type_desc` now says the colour only names which
+    limit a bar is, in all 7 locales.
 - **The Usage mode's ramp: blue, orange, red on the projected end-of-window figure.** Under 70%
   `systemBlue`, 70-90% `systemOrange`, 90% or more `systemRed`. The ramp only escalates, because
   more usage per unit of elapsed time is always worse.

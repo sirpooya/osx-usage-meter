@@ -140,10 +140,10 @@
 
 /* The three mutually exclusive bar / icon coloring modes */
 "display.color_mode" = "Farbe nach";
-"display.color_mode_type" = "Limit";
+"display.color_mode_type" = "Kategorie";
 "display.color_mode_usage" = "Nutzung";
 "display.color_mode_monochrome" = "Monochrom";
-"display.color_mode_type_desc" = "Jedes Limit behält seine eigene Farbe und wird dunkler, je näher es an seine Grenze kommt.";
+"display.color_mode_type_desc" = "Jedes Limit behält seine eigene Farbe, sodass die Farbe zeigt, welches Limit ein Balken ist.";
 "display.color_mode_usage_desc" = "Blau, Orange, dann Rot je nach projiziertem Tempo, sodass ein Balken warnt, wenn Sie der Uhr voraus sind.";
 "display.color_mode_monochrome_desc" = "Eine adaptive Farbe passend zur Menüleiste, anstelle der Statusfarben.";
 

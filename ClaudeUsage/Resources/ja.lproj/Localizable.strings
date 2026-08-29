@@ -141,10 +141,10 @@
 
 /* The three mutually exclusive bar / icon coloring modes */
 "display.color_mode" = "色の基準";
-"display.color_mode_type" = "上限";
+"display.color_mode_type" = "カテゴリ";
 "display.color_mode_usage" = "使用量";
 "display.color_mode_monochrome" = "モノクロ";
-"display.color_mode_type_desc" = "各上限が固有の色を保ち、上限に近づくほど濃くなります。";
+"display.color_mode_type_desc" = "各上限が固有の色を保つため、色はそのバーがどの上限かを示します。";
 "display.color_mode_usage_desc" = "予測ペースに応じて青、オレンジ、赤と変化し、時間の経過より使用が速いときにバーが警告します。";
 "display.color_mode_monochrome_desc" = "ステータスカラーの代わりに、メニューバーに合わせた単一の適応色を使います。";
 

@@ -141,10 +141,10 @@
 
 /* The three mutually exclusive bar / icon coloring modes */
 "display.color_mode" = "Color By";
-"display.color_mode_type" = "Limit";
+"display.color_mode_type" = "Category";
 "display.color_mode_usage" = "Usage";
 "display.color_mode_monochrome" = "Monochrome";
-"display.color_mode_type_desc" = "Each limit keeps its own color, deepening as it approaches its cap.";
+"display.color_mode_type_desc" = "Each limit keeps its own color, so color says which limit a bar is.";
 "display.color_mode_usage_desc" = "Blue, orange then red based on projected pace, so a bar warns when you are ahead of the clock.";
 "display.color_mode_monochrome_desc" = "One adaptive color that matches the menu bar, instead of status colors.";
 
