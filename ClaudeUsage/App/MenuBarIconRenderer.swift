@@ -296,11 +296,8 @@ class MenuBarIconRenderer {
     /// the bug where a limit crossing 70% silently darkened its own identity colour.
     func colorPercentage(_ percentage: Double, resetsAt: Date?, type: LimitType) -> Double {
         guard settings.paceAwareBarColors else { return UsageColorScheme.flatPercentage }
-        return UsagePaceCalculator.projectedPercentage(
-            usedPercentage: percentage,
-            resetsAt: resetsAt,
-            type: type
-        ) ?? percentage
+        // Usage mode escalates on the figure itself, not on a projection, matching claude.ai.
+        return percentage
     }
 
     /// The pace ramp colour for this limit's icon, or nil to leave the per-limit palette in charge.

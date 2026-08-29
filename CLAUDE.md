@@ -317,15 +317,21 @@ What has been changed from upstream so far:
     Read the default with `object(forKey:) as? Bool ?? true`; `UserDefaults.bool(forKey:)`
     returns false for a missing key and would silently flip it back. Tapping the list still
     toggles to absolute reset times. Percentages always read as used, never as remaining.
-  - Countdowns run one unit coarser as the window gets longer: `45m left`, then `3h 41m left`
-    under a day, then **days only** (`2d left`) once a day is on the clock. Hours next to days
-    were precision nobody acted on, and `1d 0h left` read worse than `1d left`.
+  - Countdowns run one unit coarser as the window gets longer: `45m left`, then `1h 11m left`
+    under two hours, then **hours only** (`3h left`) up to a day, then **days only** (`2d left`)
+    once a day is on the clock. Hours next to days were precision nobody acted on, and
+    `1d 0h left` read worse than `1d left`.
     `formattedCompactRemaining` in `UsageData+Formatting.swift` is the single formatter; the
     days branch uses the new `usage_data.compact_remaining_days_only` key (all 7 locales, each
     matching that locale's existing phrasing, so de is `noch %dd` and ja is `残り%d日`).
     The old two-unit `usage_data.compact_remaining_days` key and its `compactRemainingDays`
     accessor are now unused but kept, as is the never-called
     `formattedCompactRemainingWithMinutes` (which printed a third unit, `3d 4h 48m left`).
+    - The **under two hours** branch is the one exception to running coarser, added because
+      `1h left` covered everything from 60 to 119 minutes. That is the range where the 5-hour
+      window is actually being watched, so the minutes come back: the two-unit
+      `usage_data.compact_remaining_hours` key (already present in all 7 locales) prints
+      `1h 11m left`. At two hours and up the hours-only key takes over again.
     - The day count is **floored**, the same count the days-plus-hours version computed, so
       `1d left` means a full day really is left and the reset can only land later than the label
       implies. Rounding up would print `2d left` with 25h to go, promising time the user does not
@@ -805,32 +811,54 @@ What has been changed from upstream so far:
     per-limit palettes were flattened to `UsageColorScheme.flatPercentage`. Nothing deepens in
     this mode any more, so `display.color_mode_type_desc` now says the colour only names which
     limit a bar is, in all 7 locales.
-- **The Usage mode's ramp: blue, orange, red on the projected end-of-window figure.** Under 70%
-  `systemBlue`, 70-90% `systemOrange`, 90% or more `systemRed`. The ramp only escalates, because
-  more usage per unit of elapsed time is always worse.
-  - **Blue, not green, for the healthy step.** The five hour limit's own bar is green, so a green
-    fill there would say nothing.
+- **The Usage mode's ramp: blue, amber, red on the percentage actually used.** Under 70%
+  `systemBlue`, 70-90% **#F3B63F**, 90% or more **#C54A41**. The ramp only escalates.
+  - **It reads the plain number, not a pace projection.** This is what claude.ai's own usage bars
+    do (78% used is amber there, 93% used is red), and matching them is the whole point: the app
+    and the web should not disagree about the colour of the same percentage.
+  - **The projection it replaced coloured by rate, not amount**, `used / elapsedFraction`
+    extrapolated to the end of the window. It read as a bug in exactly the case it was meant to
+    help: 9% used a quarter hour into a five hour window projects to 180% of cap, so a barely
+    started window went red. Raising the gate (3% to 15% elapsed) narrowed that but did not fix
+    the mismatch with the web, so the projection came out of the colour path entirely.
+  - `UsagePaceStatus.color(usedPercentage:resetsAt:type:)` is still the single entry point both
+    the popover bars and the menu bar icons call, so the two cannot disagree. It now just forwards
+    to `level(usedPercentage:)`. `resetsAt` and `type` stay in the signature (defaulted to nil)
+    because every caller passes them and a window-aware mode may want them back.
+  - Now dead in the colour path, kept because the time marker still uses the elapsed maths:
+    `UsagePaceStatus.calculate`, `UsagePaceStatus.minimumElapsedFraction`, and
+    `UsagePaceCalculator.projectedPercentage`. `UsagePaceCalculator.elapsedFraction` and
+    `windowDuration` are still live, via `UnifiedLimitRow.rawElapsedFraction`.
   - The 70/90 breakpoints match what the per-limit palette functions already escalate on, so
     switching modes changes *which* colour a limit shows, not when it starts worrying.
-  - Applies to the popover bars (`UnifiedLimitRow.barColor`, pace beats palette) **and the menu
-    bar icons**. The icons were the whole point of the exercise and were missed on the first pass:
-    `MenuBarIconRenderer.paceColor` plus a `paceColor:` override threaded through
+  - Applies to the popover bars (`UnifiedLimitRow.barColor`, this beats the palette) **and the
+    menu bar icons**. The icons were the whole point of the exercise and were missed on the first
+    pass: `MenuBarIconRenderer.paceColor` plus a `paceColor:` override threaded through
     `createCircleImage` and both `ShapeIconRenderer` draw functions, so a limit that is orange in
     the popover is orange in the menu bar.
-  - `UsagePaceStatus.color(usedPercentage:resetsAt:type:)` is the single entry point both sides
-    call, so the two cannot disagree about what colour a given pace is.
-  - `MenuBarUI.generateCacheKey`'s pace token keys on the ramp **step**, not the projected figure.
-    `UsagePaceCalculator.projectedPercentage` clamps to 100, so two very different paces can share
-    a figure while landing on different colours; keying on the figure served a stale icon in
-    exactly the case where the colour changed.
-  - Falls back to the palette (never to a flat colour) when there is nothing to project from: no
-    fixed window (the Extra Usage buckets), too early in the window, or no usage yet.
-  - Gate is 3% elapsed, `UsagePaceStatus.minimumElapsedFraction`, and the projection is uncapped,
-    unlike `UsagePaceCalculator.projectedPercentage`.
+  - `MenuBarUI.generateCacheKey`'s pace token keys on the ramp **step**, not a figure.
   - **The time marker tick was deliberately left alone.** An earlier pass wired this ramp into the
-    tick instead of the fill, which meant the pace setting did nothing unless `showTimeMarker` was
+    tick instead of the fill, which meant the setting did nothing unless `showTimeMarker` was
     also on. Wrong feature: the setting is about bar colours. The tick stays the neutral
     `labelColor` line it has always been.
+  - **The amber and the red are sampled off claude.ai's own usage bars**, not chosen: #F3B63F at
+    78% used and #C54A41 at 93% used, read pixel by pixel off two reference screenshots. The
+    healthy step stays `systemBlue` because neither reference bar was under 70%, so there was
+    nothing to sample. Swap it for a green only with a real sample.
+  - **The track is tinted to match the fill in the popover**, the way claude.ai draws it: #F6DDAA
+    behind amber, #F6D8D7 behind red, both sampled. They are their own tokens, **not** the fill
+    composited over white at some alpha, which lands on #F6C8xx rather than #F6DDAA, so do not
+    try to derive one from the other. `UsageLimitBar.trackColor` is the new optional; nil keeps
+    the neutral `Color.primary.opacity(0.10)`, so Category and Monochrome are untouched.
+    - Those samples are from a light background. On a dark popover they would read as near-white
+      bars, so `UsagePaceStatus.trackNSColor` is a dynamic `NSColor` whose dark side is the fill
+      at 0.28 alpha instead.
+    - **The menu bar ring track deliberately stays the neutral adaptive grey**
+      (`UsageColorScheme.menuBarTrack`). A pale cream ring on a light menu bar is invisible, and
+      the bar's appearance is probed per display, which a colour sampled from one light web page
+      cannot follow. The icon *fills* do take the sampled amber and red, via `paceColor`.
+  - `MenuBarIconRenderer.colorPercentage` no longer projects either; in Usage mode it returns the
+    figure itself, so the icon palette path and the ramp cannot disagree.
 - **Limit colour mode is flat now: the per-limit palettes no longer escalate with usage.** A
   weekly limit crossing 70% used to darken its own identity colour on its own (light purple
   `#C084FC` to deep purple `#B450F0`, then `#B41EA0` at 90%), and the same step existed in all

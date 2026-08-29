@@ -117,9 +117,17 @@ extension UsageData.LimitData {
 
         let totalHours = totalMinutes / 60
 
-        // Under a day, show hours only. Same reasoning as the days branch below: once hours are
-        // the unit being read, the minutes beside them are precision nobody acts on, and floored
-        // hours mean the reset can only land later than the label says, never earlier.
+        // Under two hours, keep the minutes. This is the range where the countdown is actually
+        // being acted on, and "1h left" covers everything from 60 to 119 minutes, which is the
+        // difference between starting another task and not.
+        if totalHours < 2 {
+            return L.UsageData.compactRemainingHours(totalHours, totalMinutes % 60)
+        }
+
+        // Two hours and up but under a day, show hours only. Same reasoning as the days branch
+        // below: once hours are the unit being read, the minutes beside them are precision nobody
+        // acts on, and floored hours mean the reset can only land later than the label says,
+        // never earlier.
         if totalHours < 24 {
             return L.UsageData.compactRemainingHoursOnly(totalHours)
         }

@@ -63,6 +63,9 @@ struct UsageLimitBar: View {
     /// Where the period itself has got to (0-1), drawn as a tick across the bar.
     /// nil hides it: either the setting is off or this limit has no window to measure.
     var markerFraction: CGFloat? = nil
+    /// The unfilled remainder. nil keeps the neutral grey; Usage mode passes a tint of the fill,
+    /// the way claude.ai draws its own bars.
+    var trackColor: Color? = nil
 
     /// While refreshing, the whole bar breathes gently in place of the old ring's spinner
     @State private var isPulsing = false
@@ -71,7 +74,7 @@ struct UsageLimitBar: View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
                 Capsule(style: .continuous)
-                    .fill(Color.primary.opacity(0.10))
+                    .fill(trackColor ?? Color.primary.opacity(0.10))
 
                 Capsule(style: .continuous)
                     .fill(color)
@@ -148,6 +151,8 @@ struct UsageLimitBarRow: View {
     /// How far through the period this limit is (0-1), or nil for no tick.
     /// Already mirrored for the remaining-percentage mode by the caller.
     var markerFraction: CGFloat? = nil
+    /// The unfilled remainder, or nil for the neutral grey. See `UsageLimitBar.trackColor`.
+    var trackColor: Color? = nil
     /// Observed so flipping the remaining percentage setting re-renders open popover rows
     @ObservedObject private var settings = UserSettings.shared
     /// The trailing text (reset time or time left).
@@ -197,7 +202,8 @@ struct UsageLimitBarRow: View {
                 fraction: UsagePercentDisplay.displayFraction(percentage ?? 0),
                 color: color,
                 isRefreshing: isRefreshing,
-                markerFraction: markerFraction
+                markerFraction: markerFraction,
+                trackColor: trackColor
             )
         }
     }
@@ -233,6 +239,7 @@ struct UnifiedLimitRow: View {
             color: barColor,
             isRefreshing: isRefreshing,
             markerFraction: markerFraction,
+            trackColor: paceTrackColor,
             trailing: { displayValue }
         )
     }
@@ -356,11 +363,23 @@ struct UnifiedLimitRow: View {
     /// also meant colour said *which limit* in a mode where colour is supposed to mean rate.
     private var paceColor: Color? {
         guard settings.paceAwareBarColors else { return nil }
+        return paceStatus?.color
+    }
+
+    /// The tinted track that goes with `paceColor`, or nil outside Usage mode so the bar keeps
+    /// the neutral grey remainder.
+    private var paceTrackColor: Color? {
+        guard settings.paceAwareBarColors else { return nil }
+        return paceStatus?.trackColor
+    }
+
+    private var paceStatus: UsagePaceStatus? {
+        guard settings.paceAwareBarColors else { return nil }
         return UsagePaceStatus.color(
             usedPercentage: percentageValue ?? 0,
             resetsAt: resetsAtValue,
             type: type
-        ).color
+        )
     }
 
     /// Reset time for this row's limit, the anchor the pace projection measures the window from.
