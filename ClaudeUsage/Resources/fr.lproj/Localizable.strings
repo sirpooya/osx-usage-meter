@@ -259,9 +259,9 @@
 
 // MARK: - Limit Types (v2.0.0)
 "five_hour_limit" = "Limite 5 heures";
-"seven_day_limit" = "Limite 7 jours";
-"opus_weekly_limit" = "Limite Fable 7j";
-"sonnet_weekly_limit" = "Limite Sonnet 7j";
+"seven_day_limit" = "Hebdo Tous Modèles";
+"opus_weekly_limit" = "Hebdo Fable";
+"sonnet_weekly_limit" = "Hebdo Sonnet";
 "extra_usage" = "Utilisation supplémentaire";
 "codex_primary_limit" = "Limite Codex 5 heures";
 "codex_secondary_limit" = "Limite Codex 7 jours";
@@ -269,9 +269,10 @@
 
 // MARK: - Detail Row Labels
 "detail_row.five_hour_limit" = "Limite 5 h";
-"detail_row.seven_day_limit" = "Limite 7 j";
-"detail_row.opus_weekly_limit" = "Limite Fable 7 j";
-"detail_row.sonnet_weekly_limit" = "Limite Sonnet 7 j";
+"detail_row.seven_day_limit" = "Hebdo Tous Modèles";
+"detail_row.opus_weekly_limit" = "Hebdo Fable";
+"detail_row.sonnet_weekly_limit" = "Hebdo Sonnet";
+"detail_row.weekly_model" = "Hebdo %@";
 "detail_row.extra_usage" = "Usage en plus";
 
 // MARK: - Display Options (v2.0.0)

@@ -692,6 +692,33 @@ What has been changed from upstream so far:
     whatever weekly scoped model the API returns, and the popover already prefers the live
     `opusModelName`. These two strings are only the fallback label, so hardcoding a model name will
     read wrong if the account's scoped model is ever not Fable.
+    - Superseded by the "Weekly" rename below, which composes the live model name into the label
+      instead of leaving a hardcoded one to go stale.
+- **The weekly limit rows are named "Weekly" now, not "7-Day" or "7D Fable".** Taken from
+  claude.ai's own usage panel, which reads "Weekly · all models" and "Weekly · Fable" where ours
+  read "7-Day Limit" and "7D Fable Limit". The popover now shows `5-Hour Limit`,
+  `Weekly All Models` and `Weekly Fable`.
+  - The model row's label is **composed, not hardcoded**. New `detail_row.weekly_model` key
+    ("Weekly %@" in en, real word order in the other 6) plus `L.DetailRow.weeklyModel(_:)`, fed
+    the live `opusModelName` / `sonnetModelName` from the API. That is what fixes the stale-name
+    trap flagged above: whatever weekly scoped model the account actually has prints correctly,
+    so this does not have to be re-edited when the model changes again.
+  - `seven_day_limit`, `opus_weekly_limit`, `sonnet_weekly_limit` and their three `detail_row.*`
+    siblings were renamed in all 7 locales. Only the values changed; every key keeps its name, so
+    no call site moved. The fallbacks now read "Weekly All Models" / "Weekly Fable" /
+    "Weekly Sonnet".
+  - `.sevenDay` and `.codexSecondary` share one `switch` arm in `UnifiedLimitRow.limitName`, so
+    Codex's 7-day row is now "Weekly All Models" too. Its 7-day window is not model scoped
+    either, so the label still holds. Split the arm if Codex ever grows a per model weekly limit.
+  - `usage.seven_day_limit` and `usage.seven_day_limit_short` ("7d") are a different family
+    (menu bar and settings) and deliberately still say 7-Day.
+  - Verified live: the real popover reads `5-Hour Limit · 2h left  44%`,
+    `Weekly All Models · 5d left  31%`, `Weekly Fable · 5d left  5%`, the third row coming
+    through the composed path rather than the fallback.
+  - **No middot inside a label**, which is where this diverges from claude.ai. Their row is
+    "Weekly · all models"; ours already spends a middot separating the title from the countdown,
+    so borrowing theirs would print "Weekly · all models · 5d left" and the two separators would
+    read as one list. Title case for the same reason the other rows have it.
 - **Pace-aware colours now reach the menu bar icons too.** They originally only affected the
   popover: `paceAwareBarColors` was read in exactly one render site (`UnifiedLimitRow`), so
   flipping the switch left every status icon unchanged, which looked like the setting doing nothing.

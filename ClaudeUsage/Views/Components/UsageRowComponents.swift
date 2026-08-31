@@ -269,7 +269,8 @@ struct UnifiedLimitRow: View {
 
     private var limitName: String {
         if let override = weeklyModelOverride {
-            return override.modelName ?? L.DetailRow.opusWeekly
+            guard let modelName = override.modelName else { return L.DetailRow.opusWeekly }
+            return L.DetailRow.weeklyModel(modelName)
         }
         switch type {
         case .fiveHour, .codexPrimary:
@@ -279,9 +280,11 @@ struct UnifiedLimitRow: View {
         case .opusWeekly:
             // The Claude 5 era: this slot may carry a per model weekly limit from the limits array (Fable, for instance).
             // A real model name wins, otherwise it falls back to the default "Opus Weekly".
-            return data?.opusModelName ?? L.DetailRow.opusWeekly
+            guard let modelName = data?.opusModelName else { return L.DetailRow.opusWeekly }
+            return L.DetailRow.weeklyModel(modelName)
         case .sonnetWeekly:
-            return data?.sonnetModelName ?? L.DetailRow.sonnetWeekly
+            guard let modelName = data?.sonnetModelName else { return L.DetailRow.sonnetWeekly }
+            return L.DetailRow.weeklyModel(modelName)
         case .extraUsage, .codexExtraUsage:
             return L.DetailRow.extraUsage
         }

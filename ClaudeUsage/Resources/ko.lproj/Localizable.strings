@@ -259,9 +259,9 @@
 
 // MARK: - Limit Types (v2.0.0)
 "five_hour_limit" = "5시간 제한";
-"seven_day_limit" = "7일 제한";
-"opus_weekly_limit" = "7일 Fable 제한";
-"sonnet_weekly_limit" = "7일 Sonnet 제한";
+"seven_day_limit" = "주간 전체 모델";
+"opus_weekly_limit" = "주간 Fable";
+"sonnet_weekly_limit" = "주간 Sonnet";
 "extra_usage" = "추가 사용량";
 "codex_primary_limit" = "Codex 5시간 제한";
 "codex_secondary_limit" = "Codex 7일 제한";
@@ -269,9 +269,10 @@
 
 // MARK: - Detail Row Labels
 "detail_row.five_hour_limit" = "5시간 제한";
-"detail_row.seven_day_limit" = "7일 제한";
-"detail_row.opus_weekly_limit" = "Fable 7일 제한";
-"detail_row.sonnet_weekly_limit" = "Sonnet 7일 제한";
+"detail_row.seven_day_limit" = "주간 전체 모델";
+"detail_row.opus_weekly_limit" = "주간 Fable";
+"detail_row.sonnet_weekly_limit" = "주간 Sonnet";
+"detail_row.weekly_model" = "주간 %@";
 "detail_row.extra_usage" = "추가 사용량";
 
 // MARK: - Display Options (v2.0.0)

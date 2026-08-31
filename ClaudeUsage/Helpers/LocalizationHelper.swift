@@ -302,6 +302,14 @@ enum L {
         static var sevenDay: String { localized("detail_row.seven_day_limit") }
         static var opusWeekly: String { localized("detail_row.opus_weekly_limit") }
         static var sonnetWeekly: String { localized("detail_row.sonnet_weekly_limit") }
+
+        /// Weekly limit scoped to one model, e.g. "Weekly Fable".
+        ///
+        /// The API names the model live, so the label is composed rather than hardcoded.
+        /// `detail_row.opus_weekly_limit` is only the fallback when no name arrives.
+        static func weeklyModel(_ modelName: String) -> String {
+            return String(format: localized("detail_row.weekly_model"), modelName)
+        }
         static var extraUsage: String { localized("detail_row.extra_usage") }
         static var today: String { localized("usage_data.detail_today") }
 
