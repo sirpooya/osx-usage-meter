@@ -19,6 +19,17 @@ struct UsageMeterApp: App {
         Settings {
             EmptyView()
         }
+        .commands {
+            // The empty Settings scene above only exists because an App needs a scene. Left alone,
+            // its default Cmd+, command opens it as a blank "Usage Meter Settings" window, so the
+            // command is replaced with one that opens the real AppKit settings window.
+            CommandGroup(replacing: .appSettings) {
+                Button(L.Menu.settings) {
+                    AppDelegate.shared?.openSettingsWindow()
+                }
+                .keyboardShortcut(",", modifiers: .command)
+            }
+        }
     }
 }
 
@@ -239,6 +250,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     /// Handle the open settings notification
     /// Close the welcome window and start refreshing if authentication is configured
+    /// Opens the real settings window (General tab); used by the Cmd+, command.
+    func openSettingsWindow() {
+        menuBarManager?.openSettings()
+    }
+
     private func openSettingsFromNotification(_ notification: Notification) {
         welcomeWindow?.close()
         welcomeWindow = nil

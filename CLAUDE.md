@@ -953,6 +953,16 @@ What has been changed from upstream so far:
   - Verified live on the real bar: a 71% weekly reads light purple, the same colour it showed at
     69%, instead of stepping to deep purple.
 
+- **Cmd+, opens the real settings window.** `UsageMeterApp`'s body is a placeholder
+  `Settings { EmptyView() }` scene, and its default Cmd+, command opened that as a blank
+  "Usage Meter Settings" window. `.commands { CommandGroup(replacing: .appSettings) }` now routes
+  the shortcut to `AppDelegate.openSettingsWindow()` -> `MenuBarManager.openSettings()`.
+  Verified: Cmd+, brings up only the 556x632 settings window.
+- **No Codex brand icon between the groups in the menu bar.** With Show Icon on and both
+  providers present, `createMultiProviderIcon` now separates Claude's and Codex's rings with the
+  same divider that percentage only mode uses, instead of the `CodexIcon` clock artwork. The
+  Claude app icon still leads the bar. The Codex brand still shows in the Codex only layout,
+  where nothing else would say whose rings they are.
 - **The limit type checkboxes are real checkboxes now.** `LimitTypeCheckbox` was a plain `Button`
   drawing `checkmark.square.fill` / `square` SF Symbols: recognisable but not an AppKit checkbox,
   so it had the wrong box size, corner radius and blue, no focus ring, no mixed state and none of
@@ -972,6 +982,19 @@ What has been changed from upstream so far:
     tried and reverted: three to a row puts one column's checkbox right beside the previous
     column's *label*, so the boxes stop forming a single scannable edge and each row reads as one
     run-on line. Do not re-flow this.
+- **The custom limit list is grouped by provider**, Claude then Codex, each under its brand mark
+  (`ClaudeMark` / `CodexMark` at 12pt) and a caption-weight name, the same grouping as the Account
+  sidebar. Grouping comes from `LimitType.provider`, so a new limit type lands in the right group
+  with no list to maintain.
+  The two groups sit **side by side as two columns** (Claude left, Codex right, top aligned,
+  each column `maxWidth: .infinity` so Codex starts at a fixed x). Each column is still one
+  checkbox per line, so the single-edge rule below holds within a column.
+  Extra Usage sorts **last** in each column (`limitTypes(for:)`), after the windowed limits.
+  Sorted in the view, not by reordering `LimitType`, so menu bar and popover order are unchanged.
+  Codex rows drop the "Codex" prefix the heading already says: the checkbox uses the new
+  `LimitType.groupedName`, which maps the three Codex types to Claude's labels (5-Hour Limit,
+  Weekly All Models, Extra Usage, same as the popover). Notifications still use `displayName`. The two provider headings replace the single "Select Limits" caption;
+  `L.Welcome.selectLimits` is now unused here but kept. Names are brands, so not localized.
 - **The Color By picker sits in a `SettingRow`**, label left and segments right with the
   description underneath, the same shape as every switch in that card. Stacked full width under
   its own heading it read as a different kind of setting from its neighbours and left the row's
@@ -1282,6 +1305,8 @@ An Icon Composer bundle (Xcode 26 native format). **Artwork replaced 2026-10-04 
 Meter rename**: a black speedometer gauge on a white squircle, glyph `Union.png` at scale 0.8,
 white `fill-specializations` for dark and tinted. The bundle is Pooya's own Icon Composer export,
 copied in as-is (the 2026-08-22 pixel invader and `Assets/appicon.svg` are superseded).
+Re-imported the same day from a newer export; the only change was the layer name (`shape`),
+and the regenerated `AppIcon.appiconset` and `AppIconReverse` came out pixel-identical.
 The menu bar glyph (`AppIconReverse`, template) comes from `Assets/tray.svg`, the same gauge,
 rendered with the recipe below. It only shows when Display Content has Show Icon ticked; this
 machine was on percentage only. Note

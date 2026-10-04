@@ -187,6 +187,22 @@ enum LimitType: String, CaseIterable, Codable {
             return L.LimitTypes.codexExtraUsage
         }
     }
+
+    /// Name for a list already grouped under a provider heading, so Codex rows drop the
+    /// "Codex" prefix the heading already says. Reuses the Claude labels, which is what the
+    /// popover shows for the same Codex rows. Notifications keep `displayName`.
+    var groupedName: String {
+        switch self {
+        case .codexPrimary:
+            return LimitType.fiveHour.displayName
+        case .codexSecondary:
+            return LimitType.sevenDay.displayName
+        case .codexExtraUsage:
+            return LimitType.extraUsage.displayName
+        default:
+            return displayName
+        }
+    }
 }
 
 // MARK: - Display Mode

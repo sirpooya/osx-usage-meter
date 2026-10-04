@@ -38,14 +38,8 @@ struct GeneralSettingsDisplayOptionsSection: View {
                     // radio that reveals it, the placement the recovered welcome screen design used
                     // (`48850a8^`, `reference/Usage4Claude/.../SetupStepView.swift`).
                     if settings.displayMode == .custom {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(L.Welcome.selectLimits)
-                                .font(.caption)
-                                .fontWeight(.medium)
-
-                            limitTypeGrid
-                        }
-                        .padding(.top, 4)
+                        limitTypeGrid
+                            .padding(.top, 4)
                         .padding(.leading, 20)
                     }
                 }
@@ -101,9 +95,44 @@ struct GeneralSettingsDisplayOptionsSection: View {
     /// A wrapped grid was tried and reverted: three to a row put the checkbox of one column right
     /// next to the *label* of the one before it, so the boxes no longer formed a single scannable
     /// edge and the rows read as one run-on line. One per line keeps every box on the same x.
+    ///
+    /// Grouped by provider, Claude then Codex, each under its brand mark, the same grouping the
+    /// Account tab's sidebar uses. The provider names are brand names, so not localized.
+    ///
+    /// The two providers sit side by side as two columns, each still one checkbox per line, so
+    /// every box in a column shares one x. Columns split the width evenly so Codex always starts
+    /// at the same place regardless of how long Claude's labels are.
     private var limitTypeGrid: some View {
+        HStack(alignment: .top, spacing: 16) {
+            limitGroup("Claude", icon: ImageHelper.createClaudeMark(size: 12), types: limitTypes(for: .claude))
+                .frame(maxWidth: .infinity, alignment: .leading)
+            limitGroup("Codex", icon: ImageHelper.createCodexMark(size: 12), types: limitTypes(for: .codex))
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    /// Extra Usage goes last in each column, after the windowed limits it is not one of. Sorted
+    /// here rather than by reordering the enum, so the menu bar and popover order stay put.
+    private func limitTypes(for provider: ProviderType) -> [LimitType] {
+        let types = LimitType.allCases.filter { $0.provider == provider }
+        let isExtra: (LimitType) -> Bool = { $0 == .extraUsage || $0 == .codexExtraUsage }
+        return types.filter { !isExtra($0) } + types.filter(isExtra)
+    }
+
+    private func limitGroup(_ title: String, icon: NSImage?, types: [LimitType]) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            ForEach(LimitType.allCases, id: \.self) { limitType in
+            HStack(spacing: 5) {
+                if let icon {
+                    Image(nsImage: icon)
+                        .resizable()
+                        .frame(width: 12, height: 12)
+                }
+                Text(title)
+                    .font(.caption)
+                    .fontWeight(.medium)
+            }
+
+            ForEach(types, id: \.self) { limitType in
                 LimitTypeCheckbox(
                     limitType: limitType,
                     isSelected: settings.customDisplayTypes.contains(limitType),
@@ -189,7 +218,7 @@ struct LimitTypeCheckbox: View {
                     .font(.caption)
 
                 // Limit type name
-                Text(limitType.displayName)
+                Text(limitType.groupedName)
                     .foregroundColor(isDisabled ? .secondary : .primary)
             }
         }

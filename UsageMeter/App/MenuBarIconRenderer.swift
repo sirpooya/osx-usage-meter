@@ -110,7 +110,7 @@ class MenuBarIconRenderer {
 
     // MARK: - Multi-Provider Icon Creation
 
-    /// Dual provider icon: [Claude brand] + [Claude metrics] + [Codex brand] + [Codex metrics]
+    /// Dual provider icon: [Claude brand] + [Claude metrics] + [divider] + [Codex metrics]
     private func createMultiProviderIcon(
         data: UsageData,
         codex: CodexUsageData,
@@ -144,7 +144,9 @@ class MenuBarIconRenderer {
             // Codex part
             let codexIcons = buildCodexIcons(codex: codex, types: codexTypes, isMonochrome: isMonochrome, button: button)
             if !codexIcons.isEmpty {
-                if settings.iconDisplayMode == .percentageOnly, !claudeIcons.isEmpty {
+                // With Claude's rings in front, the divider alone separates the groups in both
+                // modes; the Codex brand icon only appears when it would otherwise lead the bar.
+                if !claudeIcons.isEmpty {
                     icons.append(createMenuBarDividerIcon(isMonochrome: isMonochrome))
                 } else if settings.iconDisplayMode == .both,
                    let brand = createProviderBrandIcon(.codex, isMonochrome: isMonochrome, size: providerBrandIconSize) {
