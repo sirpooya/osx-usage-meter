@@ -53,7 +53,7 @@ class ParseStringsTests(unittest.TestCase):
         entries, _ = parse_strings(
             "/*\n"
             "  Localizable.strings (English)\n"
-            "  ClaudeUsage\n"
+            "  UsageMeter\n"
             "*/\n"
             '"menu.about" = "About";\n'
         )

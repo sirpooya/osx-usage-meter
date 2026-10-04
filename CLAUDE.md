@@ -1,9 +1,11 @@
-# osx-claude-usage
+# osx-usage-meter
 
-macOS menu bar app showing Claude usage (session window, weekly, per-model) at a glance.
+**Usage Meter** (`UsageMeter.app`, bundle id `in.pooya.usagemeter`): macOS menu bar app showing
+Claude usage (session window, weekly, per-model) at a glance.
 
 **Not greenfield.** The codebase is [f-is-h/Usage4Claude](https://github.com/f-is-h/Usage4Claude)
-(MIT, ~22k LOC Swift), taken as-is on 2026-08-21 and renamed throughout to `ClaudeUsage`. The
+(MIT, ~22k LOC Swift), taken as-is on 2026-08-21, renamed throughout to `ClaudeUsage`, then renamed again to Usage Meter
+on 2026-10-04 (see "Renamed to Usage Meter" under Fork status). The
 goal is to improve that app in place, not to rewrite it. See "Fork status" below.
 
 ## Build and run loop (do this after every change)
@@ -11,34 +13,34 @@ goal is to improve that app in place, not to rewrite it. See "Fork status" below
 Non-negotiable. A build that only exists in DerivedData is useless.
 
 1. Rebuild (`xcodebuild` ad hoc signs it for us).
-2. Replace `/Applications/ClaudeUsage.app`, then verify the signature rather than re-signing.
+2. Replace `/Applications/UsageMeter.app`, then verify the signature rather than re-signing.
 3. Launch from `/Applications`, never from DerivedData or a temp path.
 4. Update this file with what changed.
 
 ```bash
-pkill -f "ClaudeUsage.app/Contents/MacOS/ClaudeUsage"
-xcodebuild -project ClaudeUsage.xcodeproj -scheme ClaudeUsage -configuration Debug \
+pkill -f "UsageMeter.app/Contents/MacOS/UsageMeter"
+xcodebuild -project UsageMeter.xcodeproj -scheme UsageMeter -configuration Debug \
   -derivedDataPath <scratch>/dd build \
   CODE_SIGN_IDENTITY="Apple Development: pooyak@live.com (FTQDQPMU3H)" \
   CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE_SPECIFIER="" DEVELOPMENT_TEAM=""
-rm -rf /Applications/ClaudeUsage.app
-cp -R <scratch>/dd/Build/Products/Debug/ClaudeUsage.app /Applications/ClaudeUsage.app
-codesign -v --strict /Applications/ClaudeUsage.app      # do NOT re-sign, see gotchas
-codesign -d --entitlements - /Applications/ClaudeUsage.app | grep -A2 app-sandbox   # expect false
-open -a /Applications/ClaudeUsage.app
-pgrep -lf "/Applications/ClaudeUsage.app"   # confirm it actually came up
+rm -rf /Applications/UsageMeter.app
+cp -R <scratch>/dd/Build/Products/Debug/UsageMeter.app /Applications/UsageMeter.app
+codesign -v --strict /Applications/UsageMeter.app      # do NOT re-sign, see gotchas
+codesign -d --entitlements - /Applications/UsageMeter.app | grep -A2 app-sandbox   # expect false
+open -a /Applications/UsageMeter.app
+pgrep -lf "/Applications/UsageMeter.app"   # confirm it actually came up
 ```
 
 Gotchas that cost time already:
 - **Sign with the Apple Development identity, not ad hoc**, or the Keychain prompt
-  ("ClaudeUsage wants to use your confidential information stored in Claude Code-credentials")
+  ("UsageMeter wants to use your confidential information stored in Claude Code-credentials")
   comes back after every single build. Ad hoc signing makes the app's designated requirement a
   raw `cdhash H"..."`, and that is what Keychain Access stores in the item's ACL when you click
   Always Allow. A rebuild is a new cdhash, so the grant no longer matches anything and macOS asks
   again. Signing with the identity gives an identity-based requirement instead
-  (`identifier "com.claudeusage.ClaudeUsage" and anchor apple generic and certificate
+  (`identifier "in.pooya.usagemeter" and anchor apple generic and certificate
   leaf[subject.CN] = "Apple Development: ..."`), which survives rebuilds, so Always Allow sticks.
-  Verify with `codesign -d -r- /Applications/ClaudeUsage.app`: if the last line says `cdhash`, the
+  Verify with `codesign -d -r- /Applications/UsageMeter.app`: if the last line says `cdhash`, the
   prompt will be back next build. `CODE_SIGN_STYLE=Manual` plus the two empty overrides is what
   keeps Xcode from demanding a provisioning profile. Entitlements are unaffected, still
   `app-sandbox = false`.
@@ -50,10 +52,10 @@ Gotchas that cost time already:
   shell exits, which looks exactly like a crash in the log.
 - To screenshot a window, get its id from `CGWindowListCopyWindowInfo` and use
   `screencapture -l <id>`. Region captures (`-R`) get occluded by whatever is in front.
-- `defaults delete com.claudeusage.ClaudeUsage` resets first-launch onboarding state, but **not**
+- `defaults delete in.pooya.usagemeter` resets first-launch onboarding state, but **not**
   the accounts: those live in our own Keychain item via `AccountStore`/`KeychainManager`, so the
   app still has credentials after a defaults wipe.
-- Entitlements do not come from `Config/ClaudeUsage.entitlements` alone. Xcode 26 merges
+- Entitlements do not come from `Config/UsageMeter.entitlements` alone. Xcode 26 merges
   build-setting-derived keys over that file, so `ENABLE_APP_SANDBOX` in `project.pbxproj` wins.
   Editing only the plist left `app-sandbox = true` in the signature (the giveaway was a
   `files.user-selected.read-write` key that appears in no file we own). Both configs are now `NO`.
@@ -218,18 +220,19 @@ Takeaway: the entire field splits into cookie-scrapers (fragile) and local-log-p
 Base commit: `f-is-h/Usage4Claude` main, downloaded 2026-08-21 (never cloned, so no upstream git
 history). MIT, so forking and renaming is fine, but `LICENSE` keeps f-is-h's copyright notice.
 
-Layout: app source in `ClaudeUsage/`, Xcode project `ClaudeUsage.xcodeproj`, tests in
-`Tests/ClaudeUsageCoreTests` (128 tests, `swift test`). `Package.swift` is a thin manifest that
+Layout: app source in `UsageMeter/`, Xcode project `UsageMeter.xcodeproj`, tests in
+`Tests/UsageMeterCoreTests` (128 tests, `swift test`). `Package.swift` is a thin manifest that
 points at a handful of pure-logic files in place so they can be unit tested without Xcode. The
 Xcode project is the authoritative app build.
 
-The target uses a `PBXFileSystemSynchronizedRootGroup` over the `ClaudeUsage/` folder, so new
+The target uses a `PBXFileSystemSynchronizedRootGroup` over the `UsageMeter/` folder, so new
 files are compiled automatically with no `project.pbxproj` editing.
 
 What has been changed from upstream so far:
 
-- Renamed everything to `ClaudeUsage`, bundle id `com.claudeusage.ClaudeUsage`.
-- Every GitHub URL now points at this fork's own repo, `sirpooya/osx-claude-usage`. The rename
+- Renamed everything to `ClaudeUsage`, bundle id `com.claudeusage.ClaudeUsage`. Superseded by
+  the Usage Meter rename, see the next entry.
+- Every GitHub URL now points at this fork's own repo, `sirpooya/osx-usage-meter`. The rename
   pass had left two broken families behind: `f-is-h/ClaudeUsage`, a repo that never existed
   (203 references, all 404), and `f-is-h/Usage4Claude`, which resolved but documented upstream
   rather than this fork (15 references). Both are gone. Touched app code, all 7 locale files,
@@ -251,8 +254,37 @@ What has been changed from upstream so far:
     the Swift and `.strings` files, `github.com/sponsors/f-is-h` (About window, menu bar menu,
     `website/`, READMEs), `.github/FUNDING.yml`, the `@f-is-h` profile links in the README
     Contact sections, and the two upstream-attribution rows near the top of this file.
-  - Still stale and unrelated to links: `DiagnosticLogger.swift` uses `com.f-is-h.ClaudeUsage`
-    as its `Logger` subsystem and dispatch queue label, which no longer matches the bundle id.
+  - `DiagnosticLogger.swift` used `com.f-is-h.ClaudeUsage` as its `Logger` subsystem and queue
+    label; the Usage Meter rename fixed it to `in.pooya.usagemeter`.
+- **Renamed to Usage Meter (2026-10-04).** App, project, repo and folder all moved off the
+  ClaudeUsage name:
+  - `UsageMeter.app`, `CFBundleDisplayName` "Usage Meter" (new key in `Config/Info.plist`), bundle
+    id **`in.pooya.usagemeter`**, matching the `in.pooya.<name>` rule every other osx-* app uses.
+    Target, schemes, source folder `UsageMeter/`, `UsageMeter.xcodeproj`, `Config/UsageMeter.entitlements`,
+    SwiftPM `UsageMeterCore` / `Tests/UsageMeterCoreTests`, entry point `UsageMeterApp`.
+  - User-visible copy says "Usage Meter" with a space (About, welcome title in all 7 locales,
+    diagnostic report, OAuth callback page, README, website, appcast); paths and identifiers say
+    `UsageMeter`. Prose like "your Claude usage" and the `cachedClaudeUsage` / `clearClaudeUsageState`
+    family were left alone: they mean Claude's usage, not the app.
+  - GitHub repo renamed to `sirpooya/osx-usage-meter` (GitHub redirects the old URL), every link,
+    the git remote and `SUFeedURL` repointed. Local folder is `~/Documents/GitHub/osx-usage-meter`.
+    The undeployed website domain placeholder is now `usagemeter.pages.dev`.
+  - Other ids that moved: Keychain token mirror `in.pooya.usagemeter.tokens`, Application Support
+    folder `UsageMeter/`, log files `usagemeter_*.log`, window autosave names `UsageMeter.*`.
+  - **`Services/LegacyRenameMigration.swift`** carries the old install over once (gate key
+    `legacyRename.migratedFromClaudeUsage`): copies every key from the `com.claudeusage.ClaudeUsage`
+    defaults domain that the new domain lacks (Debug builds keep accounts there as `DEBUG_*`),
+    remapping `ClaudeUsage.` window autosave keys; in Release, copies KeychainManager's items from
+    the old service (each read may prompt once, the ACL names the old id); and moves
+    `Application Support/ClaudeUsage` to `UsageMeter` if the new folder does not exist. Nothing old
+    is deleted. It runs from **AppDelegate's first stored property**, because `UserSettings.shared`
+    loads in a later stored property, before `applicationDidFinishLaunching` would ever run.
+  - Verified live: 39 keys and the history folder migrated, the CLI account re-synced, icons up in
+    the menu bar, Control Center lists `in.pooya.usagemeter` as allowed. The old token mirror item
+    was not migrated on purpose: the app re-mirrors from Claude Code's item, one prompt either way.
+  - Leftovers on this machine, harmless: the `com.claudeusage.ClaudeUsage` defaults domain, the
+    `com.claudeusage.ClaudeUsage.tokens` Keychain item, and a ghost `com.claudeusage.ClaudeUsage`
+    row in Control Center's menu bar list (`menubar-fix` skill, `prune`).
 - Replaced both icon assets with our own artwork. See "App icon".
 - Onboarding is now a single window with one path: sign in with a claude.ai account.
   - Removed upstream's first page, then the manual Session Key field, the Display Options
@@ -409,7 +441,15 @@ What has been changed from upstream so far:
   moved onto the gear so the signal is not lost.
 - **The popover header shows the subscription tier next to the title**, so it reads "Claude Team",
   the tier dimmed and regular weight because it names the plan rather than being a second title.
-  Not localized: it is the plan's own name. Claude only, Codex has no tier to show.
+  Not localized: it is the plan's own name.
+  - **Codex shows its plan too** ("Codex Plus"), and its title lost the word "Usage" in all 7
+    locales (`usage.codex_title` is just "Codex", matching `usage.title`). The plan is
+    `plan_type` from the wham/usage response, cached in `UserSettings.codexPlanType`
+    (UserDefaults `codex.planType`) from `CodexAPIService` on every successful fetch.
+    `codexPlanLabel` and `claudeSubscriptionTierLabel` share one private `planLabel` formatter
+    (Codex drops a `chatgpt_` prefix, Claude a `claude_` one; free/none/unknown stay empty).
+    Codex also strips `self_serve_` and `_prolite`: this account reports
+    `self_serve_business_prolite`, which shows as "Business".
   - Both take `.font(.headline)`, the tier overriding only the weight with `.fontWeight(.regular)`,
     so the two cannot drift apart in size. The tier was 12pt against the title's 13pt headline.
   - Title and tier sit in their own `HStack(spacing: 4)` inside the header row. Tightening the gap
@@ -462,7 +502,7 @@ What has been changed from upstream so far:
     grant ourselves, and then we **write the rotated pair back into Claude Code's Keychain entry**
     (preserving the entry's other fields). That write-back is not optional: refresh tokens are
     single use, so skipping it would silently log the user out of their own CLI on our next poll.
-  - Startup gate in `ClaudeUsageMonitorApp.applicationDidFinishLaunching` tries the sync before
+  - Startup gate in `UsageMeterApp.applicationDidFinishLaunching` tries the sync before
     deciding whether to show the welcome window, and marks first launch complete when it lands.
     It deliberately backs off when accounts already exist, so it never overrides a manual login.
   - `AuthSettingsView+CLIAccount.swift` is the settings card: sync status, masked access token,
@@ -517,13 +557,13 @@ What has been changed from upstream so far:
 - **The settings window size lives in `SettingsView.contentSize`**, used by both the view's
   `.frame` and the window, the same single-source-of-truth shape as `WelcomeView.contentSize`.
   `MenuBarManager` re-applies it with `setContentSize` immediately after
-  `setFrameAutosaveName("ClaudeUsage.SettingsWindow")`, and that ordering is the whole point:
+  `setFrameAutosaveName("UsageMeter.SettingsWindow")`, and that ordering is the whole point:
   the autosave restore happens at that call and carries whatever size the window had when it
   last closed, so a stale saved width silently wins over any change to `contentSize`. Verified
   by reading the saved entry, which still held `571 313 720 632` after the source said 556.
   Only the position is meant to be restored; the size is fixed and owned by the view. A stale
   entry left on a machine can be cleared with
-  `defaults delete com.claudeusage.ClaudeUsage "NSWindow Frame ClaudeUsage.SettingsWindow"`.
+  `defaults delete in.pooya.usagemeter "NSWindow Frame UsageMeter.SettingsWindow"`.
 - **Appearance card removed from the General tab.** The System / Light / Dark radio group and its
   hint are gone from `GeneralSettingsView`. Only the UI was removed: `UserSettings.appearance`,
   `AppearanceManager` and the `MenuBarUI` popover-appearance switch are all untouched, so the
@@ -994,7 +1034,7 @@ What has been changed from upstream so far:
     the store to one per 5 min; and a `BillingSnapshot` after every successful Console
     `current_spend` fetch (hook in `ConsoleAPIService.refresh`), one per hour. Retention 90
     days, pruned on save.
-  - Storage is `~/Library/Application Support/ClaudeUsage/usageHistory.json`, deliberately not
+  - Storage is `~/Library/Application Support/UsageMeter/usageHistory.json`, deliberately not
     UserDefaults: the competitor's issue #260 showed multi-MB history blobs blow the 4 MB
     CFPreferences domain limit and CFPreferences then silently drops ALL writes to the domain,
     credentials included.
@@ -1037,7 +1077,7 @@ schemes in `ColorScheme.swift`, the OSLog levels doc block in `LoggerExtension.s
 Chinese `XCTAssert` message in `NotificationDecisionEngineTests.swift`. Translated by extracting
 every unique comment payload (2,366 of them), translating each once, and rewriting only the comment
 side of each line, so string literals could not be touched by accident. Verified with a CJK sweep
-over `ClaudeUsage/` and `Tests/`: the only characters left are the ones listed above as deliberately
+over `UsageMeter/` and `Tests/`: the only characters left are the ones listed above as deliberately
 kept. `swift test` still passes 128/128.
 
 Still upstream's, still Chinese: `scripts/build.sh` and parts of `README.md`, `CHANGELOG.md`,
@@ -1063,7 +1103,7 @@ stops *new* debris, it does not stop the CLI's rewrites from clearing the grant.
 
 Fix: **stop reading their item on the hot path.** `Services/ClaudeTokenMirror.swift` keeps our own
 copy of the tokens in a Keychain item this app creates, service
-`com.claudeusage.ClaudeUsage.tokens`. An item we create has us in its ACL from birth and no other
+`in.pooya.usagemeter.tokens`. An item we create has us in its ACL from birth and no other
 process rewrites it, so reading it never prompts. Verified: its ACL has exactly **one** application
 entry, `(OK)`, against Claude Code's 108.
 
@@ -1238,19 +1278,22 @@ different wrong fixes all produced byte-identical coordinates. Measure with
 
 ## App icon
 
-An Icon Composer bundle (Xcode 26 native format). **Artwork replaced 2026-08-22**: the glyph is
-now a black pixel invader (was the Claude-orange pixel glyph). Source of truth for the artwork is
-`Assets/appicon.svg`, fill black; the `.icon` bundle carries it as a 1024px PNG (`appicon 3.png`)
-with `fill-specializations` flipping it to white for the dark and tinted appearances. Note
+An Icon Composer bundle (Xcode 26 native format). **Artwork replaced 2026-10-04 for the Usage
+Meter rename**: a black speedometer gauge on a white squircle, glyph `Union.png` at scale 0.8,
+white `fill-specializations` for dark and tinted. The bundle is Pooya's own Icon Composer export,
+copied in as-is (the 2026-08-22 pixel invader and `Assets/appicon.svg` are superseded).
+The menu bar glyph (`AppIconReverse`, template) comes from `Assets/tray.svg`, the same gauge,
+rendered with the recipe below. It only shows when Display Content has Show Icon ticked; this
+machine was on percentage only. Note
 `UsageColorScheme.brand` (#D97757) is unrelated code and still the login CTA / monochrome bar
 colour.
 
 Two distinct assets, and both have to be updated or the logo changes in half the app:
 
-1. **`ClaudeUsage/Resources/appicon.icon`** is the real app icon: Finder, Get Info, Spotlight,
+1. **`UsageMeter/Resources/appicon.icon`** is the real app icon: Finder, Get Info, Spotlight,
    notification banners, the DMG. `LSUIElement` is true so there is no Dock icon.
-   - `icon.json` config: fill `system-light`, neutral shadow at 0.5, translucency 0.5. Glyph
-     scaled 0.9 with a +30pt y translation so it sits optically centred inside the squircle.
+   - `icon.json` config: solid white fill, neutral shadow at 0.5, translucency 0.5. Glyph
+     scaled 0.8, no translation.
      Squares shared across platforms, circles for watchOS. White solid `fill-specializations`
      for dark and tinted.
    - Wired via `ASSETCATALOG_COMPILER_APPICON_NAME = appicon` in both build configs. The name
@@ -1258,10 +1301,10 @@ Two distinct assets, and both have to be updated or the logo changes in half the
      an `AppIcon` image set (see below) and two assets cannot share a name.
    - `actool` emits `CFBundleIconName` and `CFBundleIconFile` into the partial plist, so never
      hand-write those keys in `Info.plist`.
-   - The `.icon` lives inside the `ClaudeUsage/` folder because the Xcode target uses a
+   - The `.icon` lives inside the `UsageMeter/` folder because the Xcode target uses a
      `PBXFileSystemSynchronizedRootGroup`, so anything dropped there is compiled automatically.
 
-2. **`ClaudeUsage/Resources/Assets.xcassets/AppIcon.appiconset`** is the *in-app* logo. It
+2. **`UsageMeter/Resources/Assets.xcassets/AppIcon.appiconset`** is the *in-app* logo. It
    appears in the login window, the popover header, About, account rows, and the colour menu
    bar theme. Changing only the `.icon` leaves this one stale, which is exactly the bug that
    shipped once already.

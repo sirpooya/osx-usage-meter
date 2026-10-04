@@ -1,4 +1,4 @@
-# ClaudeUsage 手动打包发布指南
+# Usage Meter 手动打包发布指南
 
 > 详细步骤：从编译到发布 GitHub Release
 
@@ -45,14 +45,14 @@
 ### 1.2 设置构建配置
 
 确保使用Release配置：
-1. 点击顶部工具栏的设备选择器（ClaudeUsage旁边）
+1. 点击顶部工具栏的设备选择器（Usage Meter旁边）
 2. 选择 `Any Mac (Apple Silicon)` 或 `Any Mac (Intel)`
 3. 菜单栏：`Product` → `Scheme` → `Edit Scheme...`
 4. 左侧选择 `Run`，确保 `Build Configuration` 设置为 `Release`
 
 ### 1.3 Archive（归档）
 
-**重要提示：** Archive前确保已经关闭了之前打开的ClaudeUsage应用实例。
+**重要提示：** Archive前确保已经关闭了之前打开的Usage Meter应用实例。
 
 1. 菜单栏：`Product` → `Archive`
 2. 等待编译完成（通常1-2分钟）
@@ -70,22 +70,22 @@
 6. 点击 `Next`
 7. 选择保存位置，建议保存到：
    ```
-   <项目根目录>/build/ClaudeUsage-Export/
+   <项目根目录>/build/UsageMeter-Export/
    ```
 9. 点击 `Export`
 
-完成后，得到一个 `ClaudeUsage.app` 文件。
+完成后，得到一个 `UsageMeter.app` 文件。
 
 ### 1.5 验证导出的 App
 
 在终端中验证app能正常运行：
 
 ```bash
-cd <项目根目录>/build/ClaudeUsage-Export/
-open ClaudeUsage.app
+cd <项目根目录>/build/UsageMeter-Export/
+open UsageMeter.app
 ```
 
-应该能看到 ClaudeUsage 在菜单栏正常运行。
+应该能看到 Usage Meter 在菜单栏正常运行。
 
 ---
 
@@ -134,7 +134,7 @@ fileicon --version
 ### 3.1 进入工作目录
 
 ```bash
-cd <项目根目录>/build/ClaudeUsage-Export
+cd <项目根目录>/build/UsageMeter-Export
 ```
 
 ### 3.2 创建DMG
@@ -143,16 +143,16 @@ cd <项目根目录>/build/ClaudeUsage-Export
 
 ```bash
 create-dmg \
-  --volname "ClaudeUsage" \
+  --volname "UsageMeter" \
   --volicon "../../docs/images/DmgIcon.icns" \
   --window-pos 200 120 \
   --window-size 600 500 \
   --icon-size 128 \
-  --icon "ClaudeUsage.app" 175 190 \
-  --hide-extension "ClaudeUsage.app" \
+  --icon "UsageMeter.app" 175 190 \
+  --hide-extension "UsageMeter.app" \
   --app-drop-link 425 190 \
-  "ClaudeUsage-v1.0.0.dmg" \
-  "ClaudeUsage.app"
+  "UsageMeter-v1.0.0.dmg" \
+  "UsageMeter.app"
 ```
 
 **参数说明：**
@@ -163,9 +163,9 @@ create-dmg \
 - `--icon-size`: 图标的大小
 - `--icon`: 指定app在窗口中的位置
 - `--app-drop-link`: 创建Applications文件夹的快捷方式，并设置位置
-- 输出文件名: `ClaudeUsage-v1.0.0.dmg`（根据版本号修改）
+- 输出文件名: `UsageMeter-v1.0.0.dmg`（根据版本号修改）
 
-完成后，会在当前目录看到 `ClaudeUsage-v1.0.0.dmg` 文件。
+完成后，会在当前目录看到 `UsageMeter-v1.0.0.dmg` 文件。
 
 ### 3.3 设置 DMG 文件图标
 
@@ -174,10 +174,10 @@ create-dmg \
 使用 fileicon 设置 DMG 安装包文件图标：
 
 ```bash
-fileicon set "ClaudeUsage-v1.0.0.dmg" "../../docs/images/DmgIcon.icns"
+fileicon set "UsageMeter-v1.0.0.dmg" "../../docs/images/DmgIcon.icns"
 ```
 
-完成后，会在看到 `ClaudeUsage-v1.0.0.dmg` 文件图标正确显示。
+完成后，会在看到 `UsageMeter-v1.0.0.dmg` 文件图标正确显示。
 
 ---
 
@@ -189,26 +189,26 @@ fileicon set "ClaudeUsage-v1.0.0.dmg" "../../docs/images/DmgIcon.icns"
 
 ✅ 检查项：
 - [ ] DMG能正常打开
-- [ ] 看到ClaudeUsage.app图标
+- [ ] 看到UsageMeter.app图标
 - [ ] 看到Applications文件夹的快捷方式
 - [ ] 界面布局美观
 
 ### 4.2 安装测试
 
-1. 从DMG中拖动ClaudeUsage.app到Applications快捷方式
+1. 从DMG中拖动UsageMeter.app到Applications快捷方式
 2. 打开访达，进入Applications文件夹
-3. 找到ClaudeUsage.app，双击运行
+3. 找到UsageMeter.app，双击运行
 
 **首次运行提示：**
 
 由于我们的应用没有签名，首次运行时macOS会显示警告：
 
 ```
-"ClaudeUsage.app" cannot be opened because the developer cannot be verified.
+"UsageMeter.app" cannot be opened because the developer cannot be verified.
 ```
 
 **解决方法：**
-1. 右键点击 `ClaudeUsage.app`
+1. 右键点击 `UsageMeter.app`
 2. 选择 `Open`（打开）
 3. 在弹出的对话框中点击 `Open`
 
@@ -256,7 +256,7 @@ fileicon set "ClaudeUsage-v1.0.0.dmg" "../../docs/images/DmgIcon.icns"
 ```markdown
 ## 🎉 首次发布
 
-ClaudeUsage是一个macOS菜单栏应用，用于实时监控 Claude AI 的5小时使用限制。
+Usage Meter是一个macOS菜单栏应用，用于实时监控 Claude AI 的5小时使用限制。
 
 ### ✨ 主要功能
 - 📊 实时显示 Claude AI 的使用百分比
@@ -267,7 +267,7 @@ ClaudeUsage是一个macOS菜单栏应用，用于实时监控 Claude AI 的5小�
 - 🌓 支持系统深色/浅色模式
 
 ### 📦 安装说明
-1. 下载 `ClaudeUsage-v1.0.0.dmg`
+1. 下载 `UsageMeter-v1.0.0.dmg`
 2. 打开DMG文件
 3. 拖动应用到 Applications 文件夹
 4. 首次打开需要右键 → 打开
@@ -288,7 +288,7 @@ ClaudeUsage是一个macOS菜单栏应用，用于实时监控 Claude AI 的5小�
 
 1. **访问仓库Release页面**
    ```
-   https://github.com/sirpooya/osx-claude-usage/releases
+   https://github.com/sirpooya/osx-usage-meter/releases
    ```
 
 2. **创建新Release**
@@ -297,11 +297,11 @@ ClaudeUsage是一个macOS菜单栏应用，用于实时监控 Claude AI 的5小�
 3. **填写Release信息**
    - **Choose a tag**: 输入 `v1.0.0`（如果不存在会自动创建）
    - **Target**: 选择 `main` 分支
-   - **Release title**: 输入 `Version 1.0.0` 或 `ClaudeUsage v1.0.0`
+   - **Release title**: 输入 `Version 1.0.0` 或 `Usage Meter v1.0.0`
    - **Description**: 粘贴准备好的Release Notes
 
 4. **上传DMG文件**
-   - 拖动 `ClaudeUsage-v1.0.0.dmg` 到 `Attach binaries` 区域
+   - 拖动 `UsageMeter-v1.0.0.dmg` 到 `Attach binaries` 区域
    - 等待上传完成
 
 5. **发布选项**
@@ -326,7 +326,7 @@ git push origin v1.0.0
 
 # 创建Release并上传DMG
 gh release create v1.0.0 \
-  ~/Desktop/ClaudeUsage-Release/ClaudeUsage-v1.0.0.dmg \
+  ~/Desktop/UsageMeter-Release/UsageMeter-v1.0.0.dmg \
   --title "Version 1.0.0" \
   --notes "Release notes here..."
 ```
@@ -337,7 +337,7 @@ gh release create v1.0.0 \
 
 1. **访问Release页面**
    ```
-   https://github.com/sirpooya/osx-claude-usage/releases
+   https://github.com/sirpooya/osx-usage-meter/releases
    ```
 
 2. **检查内容**
@@ -395,7 +395,7 @@ hdiutil: create failed - Resource busy
 
 **解决方法：**
 - 确保没有其他DMG已经挂载
-- 关闭访达中所有ClaudeUsage相关的窗口
+- 关闭访达中所有Usage Meter相关的窗口
 - 重启终端后重试
 
 ### Q5: 用户无法打开App提示"损坏"
@@ -405,7 +405,7 @@ hdiutil: create failed - Resource busy
 **用户解决方法：**
 ```bash
 # 移除隔离属性
-xattr -cr /Applications/ClaudeUsage.app
+xattr -cr /Applications/UsageMeter.app
 ```
 
 **或者：**
@@ -451,18 +451,18 @@ git push origin :refs/tags/v1.0.0
 # 1. 在Xcode中Archive和Export
 
 # 2. 进入工作目录
-cd <项目根目录>/build/ClaudeUsage-Export
+cd <项目根目录>/build/UsageMeter-Export
 
 # 4. 创建DMG
 create-dmg \
-  --volname "ClaudeUsage" \
+  --volname "UsageMeter" \
   --window-size 600 500 \
   --app-drop-link 425 190 \
-  "ClaudeUsage-v1.0.1.dmg" \
-  "ClaudeUsage.app"
+  "UsageMeter-v1.0.1.dmg" \
+  "UsageMeter.app"
 
 # 5. 测试DMG
-open ClaudeUsage-v1.0.1.dmg
+open UsageMeter-v1.0.1.dmg
 
 # 6. 发布到GitHub
 # (在网页上操作或使用gh CLI)

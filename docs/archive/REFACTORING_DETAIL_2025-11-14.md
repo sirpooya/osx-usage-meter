@@ -261,7 +261,7 @@ private func createAppIcon(size: CGFloat) -> NSImage? {
 
 #### 解决方案
 
-**新建文件：** `ClaudeUsage/Helpers/ImageHelper.swift`
+**新建文件：** `UsageMeter/Helpers/ImageHelper.swift`
 
 ```swift
 enum ImageHelper {
@@ -534,7 +534,7 @@ private func logModeTransition(from: MonitoringMode, to: MonitoringMode) {
 
 #### 改进方案
 
-**位置：** `ClaudeUsageMonitorApp.swift`
+**位置：** `UsageMeterApp.swift`
 
 **重构前：**
 ```swift
@@ -727,7 +727,7 @@ NotificationCenter.default.publisher(for: .settingsChanged)
 | `ClaudeAPIService.swift` | 增强 | +42 | 请求取消、错误处理扩展 |
 | `SettingsView.swift` | 重构 | -16 | 移除重复代码、添加验证 UI |
 | `UsageDetailView.swift` | 重构 | -8 | 移除重复代码 |
-| `ClaudeUsageMonitorApp.swift` | 现代化 | -30 | Combine 替代传统 API |
+| `UsageMeterApp.swift` | 现代化 | -30 | Combine 替代传统 API |
 | `ImageHelper.swift` | **新建** | +58 | 统一图标创建逻辑 |
 | **总计** | | **+160** | 净增长（主要是拆分方法） |
 
@@ -754,7 +754,7 @@ NotificationCenter.default.publisher(for: .settingsChanged)
 ### 编译测试
 
 ```bash
-xcodebuild -project ClaudeUsage.xcodeproj -scheme ClaudeUsage -configuration Debug build
+xcodebuild -project UsageMeter.xcodeproj -scheme UsageMeter -configuration Debug build
 
 Result: ✅ BUILD SUCCEEDED
 ```

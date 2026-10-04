@@ -1,0 +1,4 @@
+interface:
+  display_name: "Capture Usage Meter Screenshots"
+  short_description: "Automate CleanShot screenshots of Usage Meter"
+  default_prompt: "Use $capture-usagemeter-screenshots to capture localized Usage Meter window screenshots with CleanShot."

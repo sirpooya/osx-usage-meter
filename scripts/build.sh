@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ClaudeUsage 构建打包脚本
+# UsageMeter 构建打包脚本
 # 功能：编译 Xcode 项目，导出 .app，创建 DMG 安装包
 # 用法：./scripts/build.sh [--no-clean] [--config Release|Debug] [--verbose|-v]
 
@@ -45,8 +45,8 @@ print_info() {
 # 配置变量
 # ============================================
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PROJECT_NAME="ClaudeUsage"
-SCHEME_NAME="ClaudeUsage"
+PROJECT_NAME="UsageMeter"
+SCHEME_NAME="UsageMeter"
 XCODEPROJ="${PROJECT_ROOT}/${PROJECT_NAME}.xcodeproj"
 BUILD_DIR="${PROJECT_ROOT}/build"
 
@@ -211,7 +211,7 @@ if [ "$VERBOSE" = true ]; then
         -configuration "$BUILD_CONFIG" \
         -archivePath "$ARCHIVE_PATH" \
         -destination "generic/platform=macOS,name=Any Mac" \
-        CODE_SIGN_IDENTITY="ClaudeUsage-CodeSigning" \
+        CODE_SIGN_IDENTITY="UsageMeter-CodeSigning" \
         CODE_SIGN_STYLE=Manual \
         DEVELOPMENT_TEAM=""
     ARCHIVE_RESULT=$?
@@ -224,7 +224,7 @@ else
         -configuration "$BUILD_CONFIG" \
         -archivePath "$ARCHIVE_PATH" \
         -destination "generic/platform=macOS,name=Any Mac" \
-        CODE_SIGN_IDENTITY="ClaudeUsage-CodeSigning" \
+        CODE_SIGN_IDENTITY="UsageMeter-CodeSigning" \
         CODE_SIGN_STYLE=Manual \
         DEVELOPMENT_TEAM="" \
         >> "$LOG_FILE" 2>&1
@@ -409,7 +409,7 @@ else
         echo ""
         cat <<EOF
     <enclosure
-        url="https://github.com/sirpooya/osx-claude-usage/releases/download/v$VERSION/$DMG_NAME"
+        url="https://github.com/sirpooya/osx-usage-meter/releases/download/v$VERSION/$DMG_NAME"
         $SIGN_OUTPUT
         type="application/octet-stream"/>
 EOF

@@ -47,7 +47,7 @@ CHANGELOG.md ─► 版本号权威源 + 技术档案（不进 Sparkle）
 - **版本号权威源**：CI 的 validate 从 CHANGELOG 顶部段落提取版本号，并与 Xcode
   `MARKETING_VERSION` 校验一致。
 - 输出后提醒更新最下方链接，如
-  `[1.2.0]: https://github.com/sirpooya/osx-claude-usage/releases/tag/v1.2.0`
+  `[1.2.0]: https://github.com/sirpooya/osx-usage-meter/releases/tag/v1.2.0`
 
 ## docs/RELEASE_NOTES.md
 

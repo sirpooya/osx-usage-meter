@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /legal.html
 
-Sitemap: https://claudeusage.pages.dev/sitemap.xml
+Sitemap: https://usagemeter.pages.dev/sitemap.xml

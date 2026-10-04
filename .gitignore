@@ -84,7 +84,7 @@ Temporary Items
 # Swift compiled files
 *.swiftmodule
 *.swiftdoc
-ClaudeUsageMonitor
+UsageMeterMonitor
 
 # Backup files
 *~

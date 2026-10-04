@@ -1,4 +1,4 @@
-# ClaudeUsage v2-Pragmatic 重构文档
+# Usage Meter v2-Pragmatic 重构文档
 
 > 已归档（2026-07-17）：本文档描述的是历史某一时点的重构记录，仅作参考，勿当作现行事实。
 

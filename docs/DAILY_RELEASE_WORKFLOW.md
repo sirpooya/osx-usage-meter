@@ -1,4 +1,4 @@
-# ClaudeUsage 日常版本发布流程
+# Usage Meter 日常版本发布流程
 
 > 使用 GitHub Workflow 自动化发布的快速指南
 
@@ -78,7 +78,7 @@ Cmd + R
 1. 在文件顶部添加新版本条目（完整技术改动）
 2. **重要**: 更新底部的版本链接
    ```markdown
-   [1.X.X]: https://github.com/sirpooya/osx-claude-usage/releases/tag/v1.X.X
+   [1.X.X]: https://github.com/sirpooya/osx-usage-meter/releases/tag/v1.X.X
    ```
 
 **docs/RELEASE_NOTES.md：**
@@ -100,8 +100,8 @@ Cmd + R
 ## [1.1.0] - 2025-11-15
 ...
 
-[1.2.0]: https://github.com/sirpooya/osx-claude-usage/releases/tag/v1.2.0
-[1.1.0]: https://github.com/sirpooya/osx-claude-usage/releases/tag/v1.1.0
+[1.2.0]: https://github.com/sirpooya/osx-usage-meter/releases/tag/v1.2.0
+[1.1.0]: https://github.com/sirpooya/osx-usage-meter/releases/tag/v1.1.0
 ```
 
 ---
@@ -111,7 +111,7 @@ Cmd + R
 **手工编写发版 Commit Message：**
 
 ```bash
-cd /Users/iMac/Coding/Projects/ClaudeUsage
+cd /Users/iMac/Coding/Projects/UsageMeter
 
 # 添加所有改动
 git add .
@@ -136,7 +136,7 @@ git push origin main
 
 **访问 Actions 页面监控：**
 ```
-https://github.com/sirpooya/osx-claude-usage/actions
+https://github.com/sirpooya/osx-usage-meter/actions
 ```
 
 **Workflow 流程（约10分钟）：**
@@ -178,7 +178,7 @@ CI 已经**自动发布**了 release——标题来自 commit 第一行，正文
 
 1. **访问 Releases 页面并 Edit 目标 release（vX.Y.Z）**
    ```
-   https://github.com/sirpooya/osx-claude-usage/releases
+   https://github.com/sirpooya/osx-usage-meter/releases
    ```
 2. **润色正文**：补充总览段落、emoji 标题等，更新后点 "Update release"。
 
@@ -193,7 +193,7 @@ CI 已经**自动发布**了 release——标题来自 commit 第一行，正文
 
 1. **访问 Release 页面：**
    ```
-   https://github.com/sirpooya/osx-claude-usage/releases/tag/vX.Y.Z
+   https://github.com/sirpooya/osx-usage-meter/releases/tag/vX.Y.Z
    ```
 
 2. **验证内容：**
@@ -206,7 +206,7 @@ CI 已经**自动发布**了 release——标题来自 commit 第一行，正文
 3. **测试下载：**
    ```bash
    # 下载 DMG
-   open ~/Downloads/ClaudeUsage-vX.Y.Z.dmg
+   open ~/Downloads/UsageMeter-vX.Y.Z.dmg
    
    # 安装测试
    # 验证版本号

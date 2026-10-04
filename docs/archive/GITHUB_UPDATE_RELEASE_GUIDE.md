@@ -1,6 +1,6 @@
 # GitHub 后续版本发布指南
 
-> ClaudeUsage 功能更新、Bug 修复版本发布流程
+> Usage Meter 功能更新、Bug 修复版本发布流程
 
 **预计时间：** 15-30 分钟  
 **难度：** 初级
@@ -57,7 +57,7 @@
 
 ```bash
 # 切换到项目目录
-cd /Users/iMac/Coding/Projects/ClaudeUsage
+cd /Users/iMac/Coding/Projects/UsageMeter
 
 # 查看当前状态
 git status
@@ -87,13 +87,13 @@ git diff
 
 ### 步骤 3：更新 Info.plist
 
-**文件位置：** `ClaudeUsage.xcodeproj/project.pbxproj`
+**文件位置：** `UsageMeter.xcodeproj/project.pbxproj`
 
 **在 Xcode 中操作（推荐）：**
 
 1. 在 Xcode 中打开项目
 2. 选择项目名称（最上方的蓝色图标）
-3. 选择 `ClaudeUsage` Target
+3. 选择 `UsageMeter` Target
 4. 切换到 `General` 标签
 5. 在 `Identity` 部分找到：
    - **Version:** 改为 `1.0.1`
@@ -112,14 +112,14 @@ git diff
 
 ### 步骤 4：编辑 CHANGELOG.md
 
-**文件位置：** `/Users/iMac/Coding/Projects/ClaudeUsage/CHANGELOG.md`
+**文件位置：** `/Users/iMac/Coding/Projects/UsageMeter/CHANGELOG.md`
 
 在文件顶部添加新版本记录（**保持 Keep a Changelog 格式**）：
 
 ```markdown
 # Changelog
 
-All notable changes to ClaudeUsage will be documented in this file.
+All notable changes to Usage Meter will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -224,9 +224,9 @@ git push origin v1.0.1
 
 **预期输出：**
 ```
-To https://github.com/sirpooya/osx-claude-usage.git
+To https://github.com/sirpooya/osx-usage-meter.git
    abc1234..def5678  main -> main
-To https://github.com/sirpooya/osx-claude-usage.git
+To https://github.com/sirpooya/osx-usage-meter.git
  * [new tag]         v1.0.1 -> v1.0.1
 ```
 
@@ -242,19 +242,19 @@ To https://github.com/sirpooya/osx-claude-usage.git
 2. 等待构建完成
 3. 在 Organizer 中选择刚才的 Archive
 4. 点击 `Distribute App` → `Custom` → `Copy App`
-5. 导出到 `build/ClaudeUsage-1.0.1/` 目录
+5. 导出到 `build/UsageMeter-1.0.1/` 目录
 6. 创建 DMG（参考构建文档）
 
 **最终文件：**
 ```
-/Users/iMac/Coding/Projects/ClaudeUsage/build/ClaudeUsage-1.0.1/ClaudeUsage-v1.0.1.dmg
+/Users/iMac/Coding/Projects/UsageMeter/build/UsageMeter-1.0.1/UsageMeter-v1.0.1.dmg
 ```
 
 ### 步骤 9：准备 Release Notes
 
 **标题：**
 ```
-ClaudeUsage v1.0.1 - Fix Request Rate Limiting
+Usage Meter v1.0.1 - Fix Request Rate Limiting
 ```
 
 **描述内容：**
@@ -281,7 +281,7 @@ This release addresses potential "Request Exceeded" errors by adjusting refresh 
 ### 📦 Installation
 
 **For New Users:**
-1. Download `ClaudeUsage-v1.0.1.dmg` below
+1. Download `UsageMeter-v1.0.1.dmg` below
 2. Open the DMG file
 3. Drag app to Applications folder
 4. Right-click and select "Open" on first launch
@@ -292,21 +292,21 @@ This release addresses potential "Request Exceeded" errors by adjusting refresh 
 3. Your settings (including current refresh interval) will be preserved
 
 ### 📝 Full Changelog
-See [CHANGELOG.md](https://github.com/sirpooya/osx-claude-usage/blob/main/CHANGELOG.md) for complete version history.
+See [CHANGELOG.md](https://github.com/sirpooya/osx-usage-meter/blob/main/CHANGELOG.md) for complete version history.
 
 ### 🐛 Bug Reports
-Found an issue? Please [open an issue](https://github.com/sirpooya/osx-claude-usage/issues/new) on GitHub.
+Found an issue? Please [open an issue](https://github.com/sirpooya/osx-usage-meter/issues/new) on GitHub.
 
 ---
 
-**Previous Version:** [v1.0.0](https://github.com/sirpooya/osx-claude-usage/releases/tag/v1.0.0)
+**Previous Version:** [v1.0.0](https://github.com/sirpooya/osx-usage-meter/releases/tag/v1.0.0)
 ````
 
 ### 步骤 10：在 GitHub 创建 Release
 
 1. **访问 Releases 页面**
    ```
-   https://github.com/sirpooya/osx-claude-usage/releases
+   https://github.com/sirpooya/osx-usage-meter/releases
    ```
 
 2. **点击 `Draft a new release`**
@@ -321,7 +321,7 @@ Found an issue? Please [open an issue](https://github.com/sirpooya/osx-claude-us
 
    **Release title:**
    ```
-   ClaudeUsage v1.0.1 - Fix Request Rate Limiting
+   Usage Meter v1.0.1 - Fix Request Rate Limiting
    ```
 
    **Description:**
@@ -329,7 +329,7 @@ Found an issue? Please [open an issue](https://github.com/sirpooya/osx-claude-us
 
 4. **上传文件：**
    
-   - 拖拽 `ClaudeUsage-v1.0.1.dmg` 到附件区域
+   - 拖拽 `UsageMeter-v1.0.1.dmg` 到附件区域
    - 等待上传完成
    
 5. **Release 选项：**
@@ -346,7 +346,7 @@ Found an issue? Please [open an issue](https://github.com/sirpooya/osx-claude-us
 
 **访问 Release 页面验证：**
 ```
-https://github.com/sirpooya/osx-claude-usage/releases/tag/v1.0.1
+https://github.com/sirpooya/osx-usage-meter/releases/tag/v1.0.1
 ```
 
 **检查清单：**
@@ -361,7 +361,7 @@ https://github.com/sirpooya/osx-claude-usage/releases/tag/v1.0.1
 
 **在旧版本应用中：**
 
-1. 打开 ClaudeUsage v1.0.0
+1. 打开 Usage Meter v1.0.0
 2. 点击菜单 → `Check for Updates`
 3. **应该提示：** "New Version Available! Latest: 1.0.1, Current: 1.0.0"
 4. 点击 "Download Update" 应该跳转到 Release 页面
@@ -373,7 +373,7 @@ https://github.com/sirpooya/osx-claude-usage/releases/tag/v1.0.1
 
 ### 步骤 13：测试新版本安装
 
-1. 下载 `ClaudeUsage-v1.0.1.dmg`
+1. 下载 `UsageMeter-v1.0.1.dmg`
 2. 安装到 Applications
 3. 替换旧版本
 4. 启动应用
@@ -598,7 +598,7 @@ This is a major release with significant changes and improvements.
 
 1. **验证 Release 已发布**
    ```bash
-   curl -s https://api.github.com/repos/sirpooya/osx-claude-usage/releases/latest | grep tag_name
+   curl -s https://api.github.com/repos/sirpooya/osx-usage-meter/releases/latest | grep tag_name
    ```
    应该显示 `"tag_name": "v1.0.1"`
 
@@ -606,7 +606,7 @@ This is a major release with significant changes and improvements.
    ```swift
    // 确认仓库信息正确
    private let repoOwner = "sirpooya"
-   private let repoName = "osx-claude-usage"
+   private let repoName = "osx-usage-meter"
    ```
 
 3. **检查版本比较逻辑**
@@ -625,11 +625,11 @@ This is a major release with significant changes and improvements.
 - 浏览器问题
 
 **解决方案：**
-1. 检查文件大小：`ls -lh ClaudeUsage-v1.0.1.dmg`
+1. 检查文件大小：`ls -lh UsageMeter-v1.0.1.dmg`
 2. 尝试其他浏览器
 3. 使用 GitHub CLI 上传：
    ```bash
-   gh release upload v1.0.1 ClaudeUsage-v1.0.1.dmg
+   gh release upload v1.0.1 UsageMeter-v1.0.1.dmg
    ```
 
 ### 问题：推送标签冲突

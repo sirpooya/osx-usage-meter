@@ -9,20 +9,20 @@
 // against pure-function helpers without spinning up Xcode. Targets reference
 // existing source files in place via `path:` + `sources:` — no duplication,
 // no drift. As more pure code is extracted into focused files, add it to the
-// ClaudeUsageCore target's `sources` and write tests in Tests/.
+// UsageMeterCore target's `sources` and write tests in Tests/.
 //
 import PackageDescription
 
 let package = Package(
-    name: "ClaudeUsageTests",
+    name: "UsageMeterTests",
     platforms: [.macOS(.v13)],
     products: [
-        .library(name: "ClaudeUsageCore", targets: ["ClaudeUsageCore"])
+        .library(name: "UsageMeterCore", targets: ["UsageMeterCore"])
     ],
     targets: [
         .target(
-            name: "ClaudeUsageCore",
-            path: "ClaudeUsage",
+            name: "UsageMeterCore",
+            path: "UsageMeter",
             exclude: ["Resources"],
             sources: [
                 "Models/ClaudeAPIResponseModels.swift",
@@ -38,9 +38,9 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "ClaudeUsageCoreTests",
-            dependencies: ["ClaudeUsageCore"],
-            path: "Tests/ClaudeUsageCoreTests"
+            name: "UsageMeterCoreTests",
+            dependencies: ["UsageMeterCore"],
+            path: "Tests/UsageMeterCoreTests"
         )
     ]
 )

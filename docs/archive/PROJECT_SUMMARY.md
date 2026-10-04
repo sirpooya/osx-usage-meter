@@ -1,4 +1,4 @@
-# ClaudeUsage 项目开发总结
+# Usage Meter 项目开发总结
 
 > 已归档（2026-07-17）：本文档内容截至 v1.6.0（2025-12-03），与当前版本已严重脱节，仅作参考，勿当作现行事实。
 
@@ -49,7 +49,7 @@
 
 **项目结构：**
 ```
-ClaudeUsage/
+UsageMeter/
 ├── App/                    # 应用核心
 ├── Services/               # 服务层
 ├── Models/                 # 数据模型
@@ -60,7 +60,7 @@ ClaudeUsage/
 
 #### 1. App 层（重构后架构）
 
-**ClaudeUsageMonitorApp.swift**（应用入口）
+**UsageMeterApp.swift**（应用入口）
 - 使用 `@NSApplicationDelegateAdaptor` 集成 AppDelegate
 - 设置 `.accessory` 策略（不在 Dock 显示）
 - 管理应用生命周期和资源清理
@@ -372,7 +372,7 @@ deinit {
 **1. 创建证书**
 ```
 钥匙串访问 → 证书助理 → 创建证书
-- 名称：ClaudeUsage-CodeSigning
+- 名称：UsageMeter-CodeSigning
 - 类型：代码签名
 - 证书类型：自签名根证书
 - 密钥对：RSA 2048位
@@ -386,7 +386,7 @@ deinit {
 **3. Xcode 配置**
 ```
 TARGETS → Build Settings → Signing
-- Code Signing Identity: ClaudeUsage-CodeSigning
+- Code Signing Identity: UsageMeter-CodeSigning
 - Code Signing Style: Manual
 ```
 
@@ -637,7 +637,7 @@ class MenuBarManager {
 #### 其他组件
 | 文件 | 行数 | 说明 |
 |------|------|------|
-| ClaudeUsageMonitorApp.swift | ~80 | 应用入口 + 生命周期 |
+| UsageMeterApp.swift | ~80 | 应用入口 + 生命周期 |
 | ClaudeAPIService.swift | ~200 | 网络服务 |
 | UsageDetailView.swift | ~650 | 详情视图（含菜单） |
 | SettingsView.swift | ~350 | 设置界面 |

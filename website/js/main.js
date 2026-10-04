@@ -16,4 +16,4 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-console.log('%c✨ ClaudeUsage%c\nBuilt with ❤️ by f-is-h\nhttps://github.com/sirpooya/osx-claude-usage', 'color: #CC785C; font-size: 16px; font-weight: bold;', 'color: #666; font-size: 12px;');
+console.log('%c✨ Usage Meter%c\nBuilt with ❤️ by f-is-h\nhttps://github.com/sirpooya/osx-usage-meter', 'color: #CC785C; font-size: 16px; font-weight: bold;', 'color: #666; font-size: 12px;');

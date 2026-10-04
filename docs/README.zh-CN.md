@@ -1,4 +1,4 @@
-# ClaudeUsage
+# Usage Meter
 
 [English](../README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [Français](README.fr.md) | [Deutsch](README.de.md)
 
@@ -10,8 +10,8 @@
 [![Swift](https://img.shields.io/badge/Swift-5.0%2B-orange?style=flat-square)](https://swift.org)
 [![SwiftUI](https://img.shields.io/badge/SwiftUI-✓-green?style=flat-square)](https://developer.apple.com/xcode/swiftui/)
 [![License](https://img.shields.io/badge/License-MIT-purple?style=flat-square)](../LICENSE)
-[![Release](https://img.shields.io/github/v/release/sirpooya/osx-claude-usage?style=flat-square)](https://github.com/sirpooya/osx-claude-usage/releases)
-[![Downloads (all assets, all releases)](https://img.shields.io/github/downloads/sirpooya/osx-claude-usage/total)](https://github.com/sirpooya/osx-claude-usage/releases)
+[![Release](https://img.shields.io/github/v/release/sirpooya/osx-usage-meter?style=flat-square)](https://github.com/sirpooya/osx-usage-meter/releases)
+[![Downloads (all assets, all releases)](https://img.shields.io/github/downloads/sirpooya/osx-usage-meter/total)](https://github.com/sirpooya/osx-usage-meter/releases)
 
 **在菜单栏中优雅地追踪您的 Claude（以及 Codex）订阅用量。**
 
@@ -177,7 +177,7 @@ Codex 当前配色：
 
 ### 方式一：下载预编译版本（推荐）
 
-1. 前往 [Releases 页面](https://github.com/sirpooya/osx-claude-usage/releases)
+1. 前往 [Releases 页面](https://github.com/sirpooya/osx-usage-meter/releases)
 2. 下载最新版本的 `.dmg` 文件
 3. 双击打开，将应用拖入「应用程序」文件夹
 4. 首次运行时，右键点击应用选择「打开」（需要允许运行未签名应用）
@@ -194,11 +194,11 @@ Codex 当前配色：
 
 ```bash
 # 克隆仓库
-git clone https://github.com/sirpooya/osx-claude-usage.git
-cd ClaudeUsage
+git clone https://github.com/sirpooya/osx-usage-meter.git
+cd osx-usage-meter
 
 # 在 Xcode 中打开
-open ClaudeUsage.xcodeproj
+open UsageMeter.xcodeproj
 
 # 在 Xcode 中按 Cmd + R 运行
 ```
@@ -287,7 +287,7 @@ A: 有两种方式：
 
 **方式二：通过系统设置**
 1. 打开「系统设置」→「通用」→「登录项」
-2. 点击「+」添加 ClaudeUsage
+2. 点击「+」添加 Usage Meter
 
 </details>
 
@@ -356,7 +356,7 @@ A:
 
 A: **是的，支持所有Claude平台！**
 
-由于所有Claude产品 (Web, Claude Code, Desktop App, Mobile App, Cowork) 共享同一使用配额，ClaudeUsage会监控您在所有平台上的总使用量。
+由于所有Claude产品 (Web, Claude Code, Desktop App, Mobile App, Cowork) 共享同一使用配额，Usage Meter会监控您在所有平台上的总使用量。
 
 无论您是:
 - 在终端使用 `claude code` 编程
@@ -388,7 +388,7 @@ A: macOS 系统或第三方软件（如 Bartender、Hidden Bar 等）有时会�
 **解决方法：**
 1. 按住 **Command (⌘) 键**
 2. 用鼠标拖动菜单栏中的图标
-3. 将 ClaudeUsage 图标拖到菜单栏右侧可见区域
+3. 将 Usage Meter 图标拖到菜单栏右侧可见区域
 4. 松开鼠标即可
 
 **提示：**
@@ -400,7 +400,7 @@ A: macOS 系统或第三方软件（如 Bartender、Hidden Bar 等）有时会�
 <details>
 <summary><b>Q: 如何管理多个账户？</b></summary>
 
-A: ClaudeUsage 支持 Claude 多账户、同一 Claude 账户下的多组织，以及独立的 Codex 账户管理：
+A: Usage Meter 支持 Claude 多账户、同一 Claude 账户下的多组织，以及独立的 Codex 账户管理：
 - **添加账户** - 在设置 → 认证信息中通过 Claude 浏览器登录、Claude 手动输入或 Codex 浏览器登录添加
 - **切换账户** - 在详情窗口点击「…」菜单或右键点击菜单栏图标，选择要切换的 Claude / Codex 账户
 - **编辑别名** - 为每个账户设置易于辨识的别名
@@ -584,8 +584,8 @@ Copyright (c) 2025-2026 f-is-h
 
 ## 📞 联系方式
 
-- **Issues**: [提交问题或建议](https://github.com/sirpooya/osx-claude-usage/issues)
-- **Discussions**: [参与讨论](https://github.com/sirpooya/osx-claude-usage/discussions)
+- **Issues**: [提交问题或建议](https://github.com/sirpooya/osx-usage-meter/issues)
+- **Discussions**: [参与讨论](https://github.com/sirpooya/osx-usage-meter/discussions)
 - **GitHub**: [@f-is-h](https://github.com/f-is-h)
 
 ---
@@ -602,6 +602,6 @@ Copyright (c) 2025-2026 f-is-h
 
 Made with ❤️ by [f-is-h](https://github.com/f-is-h)
 
-[⬆ 回到顶部](#claudeusage)
+[⬆ 回到顶部](#usage-meter)
 
 </div>

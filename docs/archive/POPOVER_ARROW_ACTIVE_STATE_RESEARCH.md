@@ -3,7 +3,7 @@
 ## 问题描述
 
 ### 核心问题
-ClaudeUsage 应用的详细窗口（NSPopover）存在视觉不一致问题：
+Usage Meter 应用的详细窗口（NSPopover）存在视觉不一致问题：
 - **窗口主体内容**：始终显示 Active 状态的外观（已通过设置固定 appearance 解决）
 - **NSPopover 箭头（小尖尖）**：跟随系统 Active/Inactive 状态变化，无法固定为 Active 外观
 

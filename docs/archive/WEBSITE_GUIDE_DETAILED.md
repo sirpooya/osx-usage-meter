@@ -1,6 +1,6 @@
-# ClaudeUsage 产品网站开发指南
+# Usage Meter 产品网站开发指南
 
-> 本指南用于指导使用Claude Code开发ClaudeUsage的产品网站  
+> 本指南用于指导使用Claude Code开发Usage Meter的产品网站  
 > 适用于Cloudflare Pages部署的静态网站项目
 
 ---
@@ -8,7 +8,7 @@
 ## 📋 项目概述
 
 ### 项目目标
-为ClaudeUsage macOS应用创建一个现代、轻量、专业的产品展示网站，主要用途：
+为Usage Meter macOS应用创建一个现代、轻量、专业的产品展示网站，主要用途：
 1. 向潜在用户介绍产品功能和特性
 2. 提供下载和安装指南
 3. 满足Stripe支付审核要求（包含特定商取引法表記等法律页面）
@@ -47,7 +47,7 @@ Alpine.js (可选)         - 轻量级交互（仅在需要时使用）
 
 ### 目录组织
 ```
-ClaudeUsage/
+UsageMeter/
 └── website/
     ├── index.html              # 首页（产品Landing Page）
     ├── legal.html              # 特定商取引法表記（日英双语）
@@ -80,7 +80,7 @@ ClaudeUsage/
 ### 视觉设计要点
 
 #### 1. 配色方案
-- **主色调**：基于ClaudeUsage的品牌色
+- **主色调**：基于Usage Meter的品牌色
   - 蓝色系（5小时限制）：#007AFF
   - 紫色系（7天限制）：#5E5CE6
   - 背景色：白色/浅灰 (#F5F5F7)
@@ -456,9 +456,9 @@ python3 -m http.server 8000
 **SEO基础配置**：
 ```html
 <!-- index.html头部 -->
-<title>ClaudeUsage - Claude AI使用量監視アプリ</title>
+<title>Usage Meter - Claude AI使用量監視アプリ</title>
 <meta name="description" content="macOS菜单栏应用，实时监控Claude AI使用配额...">
-<meta property="og:title" content="ClaudeUsage">
+<meta property="og:title" content="UsageMeter">
 <meta property="og:description" content="...">
 <meta property="og:image" content="./images/og-image.png">
 ```
@@ -530,7 +530,7 @@ Root directory: website
 1. **连接GitHub仓库**
    - 登录Cloudflare Dashboard
    - 创建新的Pages项目
-   - 连接到ClaudeUsage仓库
+   - 连接到Usage Meter仓库
    - 选择website目录作为根目录
 
 2. **替换地址占位符**
@@ -602,7 +602,7 @@ Root directory: website
 - Cloudflare Pages文档：https://developers.cloudflare.com/pages/
 
 ### 项目相关
-- ClaudeUsage README：项目根目录的README.md
+- Usage Meter README：项目根目录的README.md
 - 现有截图：docs/images/目录
 - 应用图标：docs/images/icon@2x.png
 
@@ -679,5 +679,5 @@ Root directory: website
 
 ---
 
-*本指南由ClaudeUsage项目维护者编写*  
+*本指南由Usage Meter项目维护者编写*  
 *最后更新：2025年12月18日*

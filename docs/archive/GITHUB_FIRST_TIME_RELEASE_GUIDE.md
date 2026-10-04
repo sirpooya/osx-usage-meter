@@ -1,6 +1,6 @@
 # GitHub 首次发布完整指南
 
-> ClaudeUsage v1.0.0 首次上传到 GitHub 的详细步骤
+> Usage Meter v1.0.0 首次上传到 GitHub 的详细步骤
 
 **预计时间：** 30-45 分钟  
 **难度：** 初级-中级
@@ -31,7 +31,7 @@
 - [ ] 已安装 Git（在终端执行 `git --version` 检查）
 - [ ] 已有 GitHub 账号
 - [ ] 已配置 Git 用户信息
-- [ ] DMG 文件已创建：`ClaudeUsage-v1.0.0.dmg`
+- [ ] DMG 文件已创建：`UsageMeter-v1.0.0.dmg`
 - [ ] 所有代码已编译通过，无警告
 - [ ] 已阅读并理解项目文档
 
@@ -57,12 +57,12 @@ git config --global --list
 在项目目录打开终端：
 
 ```bash
-cd /Users/iMac/Coding/Projects/ClaudeUsage
+cd /Users/iMac/Coding/Projects/UsageMeter
 ```
 
 #### 1.1 修改 ClaudeAPIService.swift
 
-**文件位置：** `ClaudeUsage/Services/ClaudeAPIService.swift`
+**文件位置：** `UsageMeter/Services/ClaudeAPIService.swift`
 
 找到以下 4 处 `print` 语句，改为条件编译：
 
@@ -101,7 +101,7 @@ print("Decoding error: \(error)")
 
 ### 步骤 2：添加免责声明到 README
 
-**编辑文件：** `/Users/iMac/Coding/Projects/ClaudeUsage/README.md`
+**编辑文件：** `/Users/iMac/Coding/Projects/UsageMeter/README.md`
 
 在文件最底部（`Contact` 部分之后）添加：
 
@@ -124,7 +124,7 @@ Please comply with Claude AI's Terms of Service when using this software.
 git status --ignored | grep .p12
 
 # 应该看到：
-# ClaudeUsage-CodeSigning.p12
+# UsageMeter-CodeSigning.p12
 
 # 如果看到它在 "Untracked files" 中，说明 .gitignore 工作正常
 ```
@@ -137,7 +137,7 @@ git status --ignored | grep .p12
 
 ```bash
 # 确保在项目根目录
-cd /Users/iMac/Coding/Projects/ClaudeUsage
+cd /Users/iMac/Coding/Projects/UsageMeter
 
 # 初始化 Git 仓库
 git init
@@ -148,7 +148,7 @@ git status
 
 **预期输出：**
 ```
-Initialized empty Git repository in /Users/iMac/Coding/Projects/ClaudeUsage/.git/
+Initialized empty Git repository in /Users/iMac/Coding/Projects/UsageMeter/.git/
 ```
 
 ### 步骤 5：添加文件到 Git
@@ -167,7 +167,7 @@ git status
 
 ```bash
 # 创建首次提交
-git commit -m "feat: initial commit - ClaudeUsage v1.0.0
+git commit -m "feat: initial commit - Usage Meter v1.0.0
 
 - Real-time Claude Pro usage monitoring
 - Multi-language support (EN/JA/ZH-CN/ZH-TW)
@@ -181,7 +181,7 @@ git log --oneline
 
 **预期输出：**
 ```
-abc1234 (HEAD -> main) feat: initial commit - ClaudeUsage v1.0.0
+abc1234 (HEAD -> main) feat: initial commit - Usage Meter v1.0.0
 ```
 
 ### 步骤 7：创建和推送标签
@@ -210,7 +210,7 @@ git tag -l
 
 3. **填写仓库信息**
 
-   **Repository name:** `ClaudeUsage`
+   **Repository name:** `osx-usage-meter`
    
    **Description:**
    ```
@@ -236,14 +236,14 @@ git tag -l
 
 ```bash
 # 添加远程仓库（替换为你的用户名）
-git remote add origin https://github.com/sirpooya/osx-claude-usage.git
+git remote add origin https://github.com/sirpooya/osx-usage-meter.git
 
 # 验证远程仓库
 git remote -v
 
 # 应该看到：
-# origin  https://github.com/sirpooya/osx-claude-usage.git (fetch)
-# origin  https://github.com/sirpooya/osx-claude-usage.git (push)
+# origin  https://github.com/sirpooya/osx-usage-meter.git (fetch)
+# origin  https://github.com/sirpooya/osx-usage-meter.git (push)
 ```
 
 ### 步骤 10：推送代码和标签
@@ -270,7 +270,7 @@ git push origin v1.0.0
 Enumerating objects: 123, done.
 Counting objects: 100% (123/123), done.
 ...
-To https://github.com/sirpooya/osx-claude-usage.git
+To https://github.com/sirpooya/osx-usage-meter.git
  * [new branch]      main -> main
 ```
 
@@ -278,7 +278,7 @@ To https://github.com/sirpooya/osx-claude-usage.git
 
 在浏览器中访问：
 ```
-https://github.com/sirpooya/osx-claude-usage
+https://github.com/sirpooya/osx-usage-meter
 ```
 
 **检查：**
@@ -293,7 +293,7 @@ https://github.com/sirpooya/osx-claude-usage
 
 ### 步骤 12：设置 About 部分
 
-1. **在仓库页面**（https://github.com/sirpooya/osx-claude-usage）
+1. **在仓库页面**（https://github.com/sirpooya/osx-usage-meter）
 
 2. **点击右侧的 ⚙️ 图标**（在 About 框右上角）
 
@@ -306,7 +306,7 @@ https://github.com/sirpooya/osx-claude-usage
    
    **Website:** （留空或填写）
    ```
-   https://github.com/sirpooya/osx-claude-usage
+   https://github.com/sirpooya/osx-usage-meter
    ```
    
    **Topics:** （添加标签，用空格分隔）
@@ -382,9 +382,9 @@ https://github.com/sirpooya/osx-claude-usage
 
 3. **设计内容**
    ```
-   左侧：ClaudeUsage 图标（放大）
+   左侧：Usage Meter 图标（放大）
    右侧：
-   - 标题："ClaudeUsage"
+   - 标题："UsageMeter"
    - 副标题："Monitor Claude Usage"
    - 标语："Native macOS Menu Bar App"
    ```
@@ -420,7 +420,7 @@ GitHub 会自动生成预览，但效果一般。
 ### 步骤 16：上传预览图
 
 1. **回到 GitHub 仓库页面**
-   - 访问：https://github.com/sirpooya/osx-claude-usage
+   - 访问：https://github.com/sirpooya/osx-usage-meter
 
 2. **进入 Settings**
    - 点击顶部 `Settings` 标签
@@ -446,7 +446,7 @@ GitHub 会自动生成预览，但效果一般。
 
 **确认 DMG 位置：**
 ```bash
-ls -lh /Users/iMac/Coding/Projects/ClaudeUsage/build/ClaudeUsage1.0.0/ClaudeUsage-v1.0.0.dmg
+ls -lh /Users/iMac/Coding/Projects/UsageMeter/build/UsageMeter1.0.0/UsageMeter-v1.0.0.dmg
 ```
 
 **检查文件大小：**（应该在 10-30MB 之间）
@@ -455,7 +455,7 @@ ls -lh /Users/iMac/Coding/Projects/ClaudeUsage/build/ClaudeUsage1.0.0/ClaudeUsag
 
 1. **访问 Releases 页面**
    ```
-   https://github.com/sirpooya/osx-claude-usage/releases
+   https://github.com/sirpooya/osx-usage-meter/releases
    ```
 
 2. **点击 `Draft a new release`** 或 `Create a new release`
@@ -471,7 +471,7 @@ ls -lh /Users/iMac/Coding/Projects/ClaudeUsage/build/ClaudeUsage1.0.0/ClaudeUsag
 
    **Release title:**
    ```
-   ClaudeUsage v1.0.0 - Initial Release
+   Usage Meter v1.0.0 - Initial Release
    ```
 
    **Description:** （复制以下内容）
@@ -479,7 +479,7 @@ ls -lh /Users/iMac/Coding/Projects/ClaudeUsage/build/ClaudeUsage1.0.0/ClaudeUsag
    ```markdown
    ## 🎉 First Release!
 
-   This is the first official release of ClaudeUsage - a native macOS menu bar app for monitoring Claude Pro's 5-hour usage quota.
+   This is the first official release of Usage Meter - a native macOS menu bar app for monitoring Claude Pro's 5-hour usage quota.
 
    ### ✨ Features
 
@@ -503,7 +503,7 @@ ls -lh /Users/iMac/Coding/Projects/ClaudeUsage/build/ClaudeUsage1.0.0/ClaudeUsag
 
    ### 📦 Installation
 
-   1. Download `ClaudeUsage-v1.0.0.dmg` below
+   1. Download `UsageMeter-v1.0.0.dmg` below
    2. Open the DMG file
    3. Drag app to Applications folder
    4. Right-click and select "Open" on first launch
@@ -522,10 +522,10 @@ ls -lh /Users/iMac/Coding/Projects/ClaudeUsage/build/ClaudeUsage1.0.0/ClaudeUsag
 
    ### 📝 Documentation
 
-   - [Complete README](https://github.com/sirpooya/osx-claude-usage#readme)
-   - [User Guide](https://github.com/sirpooya/osx-claude-usage#-user-guide)
-   - [FAQ](https://github.com/sirpooya/osx-claude-usage#-faq)
-   - [Contributing](https://github.com/sirpooya/osx-claude-usage/blob/main/CONTRIBUTING.md)
+   - [Complete README](https://github.com/sirpooya/osx-usage-meter#readme)
+   - [User Guide](https://github.com/sirpooya/osx-usage-meter#-user-guide)
+   - [FAQ](https://github.com/sirpooya/osx-usage-meter#-faq)
+   - [Contributing](https://github.com/sirpooya/osx-usage-meter/blob/main/CONTRIBUTING.md)
 
    ### 🙏 Acknowledgments
 
@@ -538,7 +538,7 @@ ls -lh /Users/iMac/Coding/Projects/ClaudeUsage/build/ClaudeUsage1.0.0/ClaudeUsag
 
 4. **上传 DMG 文件**
    - 找到页面底部的 "Attach binaries by dropping them here or selecting them."
-   - 拖拽或点击选择 `ClaudeUsage-v1.0.0.dmg`
+   - 拖拽或点击选择 `UsageMeter-v1.0.0.dmg`
    - 等待上传完成（进度条显示）
 
 5. **设置 Release 选项**
@@ -574,7 +574,7 @@ ls -lh /Users/iMac/Coding/Projects/ClaudeUsage/build/ClaudeUsage1.0.0/ClaudeUsag
 
 #### 20.1 检查仓库首页
 
-访问：https://github.com/sirpooya/osx-claude-usage
+访问：https://github.com/sirpooya/osx-usage-meter
 
 **确认：**
 - ✅ README 正确渲染
@@ -647,7 +647,7 @@ cat ~/.ssh/id_ed25519.pub
 # 复制输出，粘贴到 GitHub Settings → SSH Keys
 
 # 修改远程仓库为 SSH
-git remote set-url origin git@github.com:sirpooya/osx-claude-usage.git
+git remote set-url origin git@github.com:sirpooya/osx-usage-meter.git
 ```
 
 ### Q2: 推送后 README 图片不显示
@@ -665,7 +665,7 @@ git remote set-url origin git@github.com:sirpooya/osx-claude-usage.git
 ![icon](docs/images/icon@2x.png)
 
 <!-- 或 GitHub 完整路径 -->
-![icon](https://raw.githubusercontent.com/sirpooya/osx-claude-usage/main/docs/images/icon@2x.png)
+![icon](https://raw.githubusercontent.com/sirpooya/osx-usage-meter/main/docs/images/icon@2x.png)
 ```
 
 ### Q3: Topics 标签添加后不显示
@@ -710,12 +710,12 @@ git remote set-url origin git@github.com:sirpooya/osx-claude-usage.git
 ```swift
 // 在 UpdateChecker.swift 中确认：
 private let repoOwner = "sirpooya"  // 正确
-private let repoName = "osx-claude-usage"  // 正确
+private let repoName = "osx-usage-meter"  // 正确
 ```
 
 **测试 API：**
 ```bash
-curl https://api.github.com/repos/sirpooya/osx-claude-usage/releases/latest
+curl https://api.github.com/repos/sirpooya/osx-usage-meter/releases/latest
 ```
 
 应该返回 JSON，包含 `tag_name: "v1.0.0"`
@@ -726,7 +726,7 @@ curl https://api.github.com/repos/sirpooya/osx-claude-usage/releases/latest
 
 ```bash
 # 从 Git 中移除但保留本地文件
-git rm --cached ClaudeUsage-CodeSigning.p12
+git rm --cached UsageMeter-CodeSigning.p12
 
 # 提交移除操作
 git commit -m "chore: remove certificate file from git"
@@ -743,7 +743,7 @@ git push origin main
 brew install git-filter-repo
 
 # 从历史中移除文件
-git-filter-repo --invert-paths --path ClaudeUsage-CodeSigning.p12
+git-filter-repo --invert-paths --path UsageMeter-CodeSigning.p12
 
 # 强制推送（危险操作！确认无误后执行）
 git push origin main --force

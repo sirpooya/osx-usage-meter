@@ -1,13 +1,13 @@
 <?xml version="1.0" standalone="yes"?>
 <!--
-    Sparkle appcast feed for ClaudeUsage.
+    Sparkle appcast feed for Usage Meter.
 
     Each release is recorded here as an <item> with the signed enclosure
     that scripts/build.sh prints after sign_update. New items go at the
     top of the <channel> so Sparkle finds the latest first.
 
     Feed URL referenced by Info.plist's SUFeedURL:
-      https://raw.githubusercontent.com/sirpooya/osx-claude-usage/main/appcast.xml
+      https://raw.githubusercontent.com/sirpooya/osx-usage-meter/main/appcast.xml
 
     See docs/SPARKLE_SETUP.md for the per-release workflow.
 
@@ -19,14 +19,14 @@
             <sparkle:version>BUILD</sparkle:version>
             <sparkle:shortVersionString>X.Y.Z</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
-            <link>https://github.com/sirpooya/osx-claude-usage/releases/tag/vX.Y.Z</link>
+            <link>https://github.com/sirpooya/osx-usage-meter/releases/tag/vX.Y.Z</link>
             <description sparkle:format="markdown"><![CDATA[
 ## vX.Y.Z
 
 - Summary line (Markdown is rendered by Sparkle's release-notes view)
             ]]></description>
             <enclosure
-                url="https://github.com/sirpooya/osx-claude-usage/releases/download/vX.Y.Z/ClaudeUsage-vX.Y.Z.dmg"
+                url="https://github.com/sirpooya/osx-usage-meter/releases/download/vX.Y.Z/UsageMeter-vX.Y.Z.dmg"
                 sparkle:edSignature="..."
                 length="..."
                 type="application/octet-stream"/>
@@ -34,9 +34,9 @@
 -->
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
     <channel>
-        <title>ClaudeUsage</title>
-        <link>https://github.com/sirpooya/osx-claude-usage</link>
-        <description>Updates to ClaudeUsage: Claude.ai usage menu bar app for macOS.</description>
+        <title>Usage Meter</title>
+        <link>https://github.com/sirpooya/osx-usage-meter</link>
+        <description>Updates to Usage Meter: Claude.ai usage menu bar app for macOS.</description>
         <language>en</language>
         <!-- Items go here. Top item is the latest version. -->
     </channel>

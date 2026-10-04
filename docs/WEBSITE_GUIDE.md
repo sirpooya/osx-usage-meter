@@ -1,6 +1,6 @@
-# ClaudeUsage 产品网站开发指南（精简版）
+# Usage Meter 产品网站开发指南（精简版）
 
-> 本指南用于指导Claude Code开发ClaudeUsage产品网站
+> 本指南用于指导Claude Code开发Usage Meter产品网站
 > 适用于Cloudflare Pages静态部署
 
 ---
@@ -67,7 +67,7 @@
 ## 📋 项目概述
 
 ### 项目目标
-为ClaudeUsage macOS应用创建产品展示网站：
+为Usage Meter macOS应用创建产品展示网站：
 - 向用户介绍产品功能
 - 提供下载和文档
 - 满足Stripe审核的法律合规要求（特商法、隐私政策）
@@ -97,7 +97,7 @@ Cloudflare Pages Functions - 地址替换（边缘计算）
 ## 📁 项目结构
 
 ```
-ClaudeUsage/
+UsageMeter/
 └── website/
     ├── functions/              # Cloudflare Pages Functions
     │   ├── _middleware.js      # 地址替换中间件
@@ -143,7 +143,7 @@ ClaudeUsage/
 --claude-dark: #1F1F1F;        /* 标题 */
 --claude-text: #2D2D2D;        /* 正文 */
 
-/* ClaudeUsage状态色 */
+/* Usage Meter状态色 */
 --safe-green: #34C759;         /* 5小时安全 */
 --warn-orange: #FF9500;        /* 警告 */
 --danger-red: #FF3B30;         /* 危险 */
@@ -513,4 +513,4 @@ python3 -m http.server 8000
 
 ---
 
-*ClaudeUsage项目 | 2025年12月18日*
+*Usage Meter项目 | 2025年12月18日*

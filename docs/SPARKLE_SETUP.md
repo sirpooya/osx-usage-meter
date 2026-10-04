@@ -83,7 +83,7 @@ in your keychain. Public key: hGTiB0kyn45HOB8WWKdAHc28+Bthe8Rv8O7asa4nG2c=
 
 初始配置完成后，每次发版按以下流程操作：
 
-1. **更新版本号**：修改 `ClaudeUsage.xcodeproj/project.pbxproj` 中的 `MARKETING_VERSION`。`CURRENT_PROJECT_VERSION` 已配置为 `$(MARKETING_VERSION)`，Sparkle 比较版本时使用的 Build 号（`CFBundleVersion`）会自动跟随，**无需手动修改**。切勿将其固定为 `1` 等常数——否则两个不同版本共享相同 Build 号，Sparkle 无法区分，导致更新通知缺失或更新死循环。
+1. **更新版本号**：修改 `UsageMeter.xcodeproj/project.pbxproj` 中的 `MARKETING_VERSION`。`CURRENT_PROJECT_VERSION` 已配置为 `$(MARKETING_VERSION)`，Sparkle 比较版本时使用的 Build 号（`CFBundleVersion`）会自动跟随，**无需手动修改**。切勿将其固定为 `1` 等常数——否则两个不同版本共享相同 Build 号，Sparkle 无法区分，导致更新通知缺失或更新死循环。
 
 2. **构建 DMG**：
 
@@ -95,7 +95,7 @@ in your keychain. Public key: hGTiB0kyn45HOB8WWKdAHc28+Bthe8Rv8O7asa4nG2c=
 
    ```
        <enclosure
-           url="https://github.com/sirpooya/osx-claude-usage/releases/download/v3.2.0/ClaudeUsage-v3.2.0.dmg"
+           url="https://github.com/sirpooya/osx-usage-meter/releases/download/v3.2.0/UsageMeter-v3.2.0.dmg"
            sparkle:edSignature="qZ0Y8nm..."
            length="9437184"
            type="application/octet-stream"/>
@@ -118,7 +118,7 @@ in your keychain. Public key: hGTiB0kyn45HOB8WWKdAHc28+Bthe8Rv8O7asa4nG2c=
 
 应用以沙盒模式发布（`ENABLE_APP_SANDBOX = YES`）。以下三项配置确保 Sparkle 的一键安装在沙盒下正常工作：
 
-1. **`Config/ClaudeUsage.entitlements`**（通过 `CODE_SIGN_ENTITLEMENTS` 关联）授权：
+1. **`Config/UsageMeter.entitlements`**（通过 `CODE_SIGN_ENTITLEMENTS` 关联）授权：
    - `com.apple.security.app-sandbox`
    - `com.apple.security.network.client` — 允许 HTTPS 访问 API 与 appcast
    - `com.apple.security.temporary-exception.mach-lookup.global-name`，用于 `$(PRODUCT_BUNDLE_IDENTIFIER)-spks` / `-spki`，即 Sparkle 内置的 Installer 和 Status XPC 服务。`$(...)` 在构建时展开，自动跟随 Bundle ID。

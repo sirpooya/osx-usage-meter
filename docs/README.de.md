@@ -1,4 +1,4 @@
-# ClaudeUsage
+# Usage Meter
 
 [English](../README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [Français](README.fr.md) | [Deutsch](README.de.md)
 
@@ -10,8 +10,8 @@
 [![Swift](https://img.shields.io/badge/Swift-5.0%2B-orange?style=flat-square)](https://swift.org)
 [![SwiftUI](https://img.shields.io/badge/SwiftUI-✓-green?style=flat-square)](https://developer.apple.com/xcode/swiftui/)
 [![License](https://img.shields.io/badge/License-MIT-purple?style=flat-square)](../LICENSE)
-[![Release](https://img.shields.io/github/v/release/sirpooya/osx-claude-usage?style=flat-square)](https://github.com/sirpooya/osx-claude-usage/releases)
-[![Downloads (all assets, all releases)](https://img.shields.io/github/downloads/sirpooya/osx-claude-usage/total)](https://github.com/sirpooya/osx-claude-usage/releases)
+[![Release](https://img.shields.io/github/v/release/sirpooya/osx-usage-meter?style=flat-square)](https://github.com/sirpooya/osx-usage-meter/releases)
+[![Downloads (all assets, all releases)](https://img.shields.io/github/downloads/sirpooya/osx-usage-meter/total)](https://github.com/sirpooya/osx-usage-meter/releases)
 
 **Behalte deine Claude- (und Codex-) Abonnementnutzung elegant in der Menüleiste im Blick.**
 
@@ -177,7 +177,7 @@ Aktuelles Farbschema für Codex:
 
 ### Option 1: Vorkompilierte Version herunterladen (empfohlen)
 
-1. Zur [Releases-Seite](https://github.com/sirpooya/osx-claude-usage/releases) gehen
+1. Zur [Releases-Seite](https://github.com/sirpooya/osx-usage-meter/releases) gehen
 2. Die neueste `.dmg`-Datei herunterladen
 3. Doppelklicken und die App in den Ordner „Programme" ziehen
 4. Beim ersten Start mit Rechtsklick auf die App „Öffnen" wählen (das Ausführen einer nicht signierten App muss erlaubt werden)
@@ -194,11 +194,11 @@ Aktuelles Farbschema für Codex:
 
 ```bash
 # Repository klonen
-git clone https://github.com/sirpooya/osx-claude-usage.git
-cd ClaudeUsage
+git clone https://github.com/sirpooya/osx-usage-meter.git
+cd osx-usage-meter
 
 # In Xcode öffnen
-open ClaudeUsage.xcodeproj
+open UsageMeter.xcodeproj
 
 # In Xcode mit Cmd + R ausführen
 ```
@@ -287,7 +287,7 @@ A: Es gibt zwei Wege:
 
 **Option 2: Über die Systemeinstellungen**
 1. „Systemeinstellungen" → „Allgemein" → „Anmeldeobjekte" öffnen
-2. Auf „+" klicken und ClaudeUsage hinzufügen
+2. Auf „+" klicken und Usage Meter hinzufügen
 
 </details>
 
@@ -356,7 +356,7 @@ Du kannst all das überprüfen, indem du den Quellcode auf GitHub ansiehst!
 
 A: **Ja, alle Claude-Plattformen werden unterstützt!**
 
-Da alle Claude-Produkte (Web, Claude Code, Desktop App, Mobile App, Cowork) sich dasselbe Nutzungskontingent teilen, überwacht ClaudeUsage deine Gesamtnutzung über alle Plattformen hinweg.
+Da alle Claude-Produkte (Web, Claude Code, Desktop App, Mobile App, Cowork) sich dasselbe Nutzungskontingent teilen, überwacht Usage Meter deine Gesamtnutzung über alle Plattformen hinweg.
 
 Ganz gleich, ob du:
 - im Terminal mit `claude code` programmierst
@@ -388,7 +388,7 @@ A: macOS selbst oder Drittanbietersoftware (wie Bartender, Hidden Bar usw.) blen
 **Lösung:**
 1. Die **Command-Taste (⌘)** gedrückt halten
 2. Das Symbol in der Menüleiste mit der Maus ziehen
-3. Das ClaudeUsage-Symbol in den sichtbaren Bereich rechts in der Menüleiste ziehen
+3. Das UsageMeter-Symbol in den sichtbaren Bereich rechts in der Menüleiste ziehen
 4. Die Maustaste loslassen
 
 **Tipp:**
@@ -400,7 +400,7 @@ A: macOS selbst oder Drittanbietersoftware (wie Bartender, Hidden Bar usw.) blen
 <details>
 <summary><b>F: Wie verwalte ich mehrere Accounts?</b></summary>
 
-A: ClaudeUsage unterstützt mehrere Claude-Accounts, mehrere Organisationen pro Claude-Account sowie eine eigenständige Codex-Account-Verwaltung:
+A: Usage Meter unterstützt mehrere Claude-Accounts, mehrere Organisationen pro Claude-Account sowie eine eigenständige Codex-Account-Verwaltung:
 - **Account hinzufügen** – Unter Einstellungen → Anmeldedaten per Claude-Browser-Anmeldung, manueller Claude-Eingabe oder Codex-Browser-Anmeldung
 - **Account wechseln** – Im Detailfenster auf das „…"-Menü oder mit Rechtsklick auf das Menüleisten-Symbol den gewünschten Claude-/Codex-Account auswählen
 - **Alias bearbeiten** – Für jeden Account einen gut erkennbaren Alias festlegen
@@ -586,8 +586,8 @@ und/oder Kopien davon zu verkaufen.
 
 ## 📞 Kontakt
 
-- **Issues**: [Problem oder Vorschlag melden](https://github.com/sirpooya/osx-claude-usage/issues)
-- **Discussions**: [An der Diskussion teilnehmen](https://github.com/sirpooya/osx-claude-usage/discussions)
+- **Issues**: [Problem oder Vorschlag melden](https://github.com/sirpooya/osx-usage-meter/issues)
+- **Discussions**: [An der Diskussion teilnehmen](https://github.com/sirpooya/osx-usage-meter/discussions)
 - **GitHub**: [@f-is-h](https://github.com/f-is-h)
 
 ---
@@ -604,6 +604,6 @@ Dieses Projekt ist ein eigenständiges Drittanbieter-Tool und steht in keiner of
 
 Made with ❤️ by [f-is-h](https://github.com/f-is-h)
 
-[⬆ Zurück nach oben](#claudeusage)
+[⬆ Zurück nach oben](#usage-meter)
 
 </div>

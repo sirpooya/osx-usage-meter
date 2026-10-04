@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ClaudeUsage - Cleanup Failed Release
+# UsageMeter - Cleanup Failed Release
 # This script cleans up tags and releases when build fails
 
 set -e

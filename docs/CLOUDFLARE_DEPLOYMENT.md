@@ -1,11 +1,11 @@
 # Cloudflare Pages 部署指南
 
-将 ClaudeUsage 网站部署到 Cloudflare Pages 的完整步骤。
+将 Usage Meter 网站部署到 Cloudflare Pages 的完整步骤。
 
 ## 准备工作
 
 - ✅ Cloudflare 账号
-- ✅ GitHub 仓库：`sirpooya/osx-claude-usage`
+- ✅ GitHub 仓库：`sirpooya/osx-usage-meter`
 - ✅ 域名：`fi5h.xyz`（已注册）
 - ✅ 目标网址：`u4c.fi5h.xyz`
 
@@ -17,7 +17,7 @@
 2. 左侧菜单选择 **Workers & Pages**
 3. 点击 **Create application** → **Pages** → **Connect to Git**
 4. 授权 Cloudflare 访问你的 GitHub 账号
-5. 选择仓库：**sirpooya/osx-claude-usage**
+5. 选择仓库：**sirpooya/osx-usage-meter**
 
 ---
 
@@ -27,7 +27,7 @@
 
 | 配置项 | 值 |
 |--------|-----|
-| **Project name** | `claudeusage`（或其他名称）|
+| **Project name** | `usagemeter`（或其他名称）|
 | **Production branch** | `main` |
 | **Build command** | （留空）|
 | **Build output directory** | `/` |
@@ -75,7 +75,7 @@
 
 访问以下网址确认部署成功：
 
-- ✅ **临时域名**：`https://claudeusage.pages.dev`（或你的项目名）
+- ✅ **临时域名**：`https://usagemeter.pages.dev`（或你的项目名）
 - ✅ **自定义域名**：`https://u4c.fi5h.xyz`
 
 测试检查清单：
@@ -97,7 +97,7 @@
 
 ### 5.1 更新所有 HTML 文件
 
-将所有 `https://claudeusage.pages.dev` 替换为 `https://u4c.fi5h.xyz`
+将所有 `https://usagemeter.pages.dev` 替换为 `https://u4c.fi5h.xyz`
 
 **需要更新的文件**：
 - `website/index.html`

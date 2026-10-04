@@ -1,4 +1,4 @@
-# ClaudeUsage
+# Usage Meter
 
 [English](../README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [한국어](README.ko.md) | [Français](README.fr.md) | [Deutsch](README.de.md)
 
@@ -10,8 +10,8 @@
 [![Swift](https://img.shields.io/badge/Swift-5.0%2B-orange?style=flat-square)](https://swift.org)
 [![SwiftUI](https://img.shields.io/badge/SwiftUI-✓-green?style=flat-square)](https://developer.apple.com/xcode/swiftui/)
 [![License](https://img.shields.io/badge/License-MIT-purple?style=flat-square)](../LICENSE)
-[![Release](https://img.shields.io/github/v/release/sirpooya/osx-claude-usage?style=flat-square)](https://github.com/sirpooya/osx-claude-usage/releases)
-[![Downloads (all assets, all releases)](https://img.shields.io/github/downloads/sirpooya/osx-claude-usage/total)](https://github.com/sirpooya/osx-claude-usage/releases)
+[![Release](https://img.shields.io/github/v/release/sirpooya/osx-usage-meter?style=flat-square)](https://github.com/sirpooya/osx-usage-meter/releases)
+[![Downloads (all assets, all releases)](https://img.shields.io/github/downloads/sirpooya/osx-usage-meter/total)](https://github.com/sirpooya/osx-usage-meter/releases)
 
 **메뉴 바에서 Claude(및 Codex) 구독 할당량을 아름답게 추적하세요.**
 
@@ -177,7 +177,7 @@ Codex 현재 색상:
 
 ### 방법 1: 미리 빌드된 버전 다운로드(권장)
 
-1. [Releases 페이지](https://github.com/sirpooya/osx-claude-usage/releases)로 이동
+1. [Releases 페이지](https://github.com/sirpooya/osx-usage-meter/releases)로 이동
 2. 최신 `.dmg` 파일 다운로드
 3. 더블 클릭하여 열고 앱을 Applications 폴더로 드래그
 4. 첫 실행 시 앱을 우클릭하고 "열기" 선택(서명되지 않은 앱 허용)
@@ -194,11 +194,11 @@ Codex 현재 색상:
 
 ```bash
 # 저장소 복제
-git clone https://github.com/sirpooya/osx-claude-usage.git
-cd ClaudeUsage
+git clone https://github.com/sirpooya/osx-usage-meter.git
+cd osx-usage-meter
 
 # Xcode에서 열기
-open ClaudeUsage.xcodeproj
+open UsageMeter.xcodeproj
 
 # Xcode에서 Cmd + R로 실행
 ```
@@ -287,7 +287,7 @@ A: 두 가지 방법이 있습니다:
 
 **방법 2: 시스템 설정을 통해**
 1. 시스템 설정 → 일반 → 로그인 항목 열기
-2. "+"를 클릭하여 ClaudeUsage 추가
+2. "+"를 클릭하여 Usage Meter 추가
 
 </details>
 
@@ -356,7 +356,7 @@ GitHub에서 소스 코드를 검토하여 이 모든 것을 확인할 수 있�
 
 A: **예, 모든 Claude 플랫폼에서 작동합니다!**
 
-모든 Claude 제품(Web, Claude Code, Desktop App, Mobile App, Cowork)이 동일한 사용 할당량을 공유하므로 ClaudeUsage는 모든 플랫폼에서의 총 사용량을 모니터링합니다.
+모든 Claude 제품(Web, Claude Code, Desktop App, Mobile App, Cowork)이 동일한 사용 할당량을 공유하므로 Usage Meter는 모든 플랫폼에서의 총 사용량을 모니터링합니다.
 
 다음과 같은 경우에도:
 - 터미널에서 `claude code`로 코딩
@@ -388,7 +388,7 @@ A: macOS 시스템 또는 타사 소프트웨어(Bartender, Hidden Bar 등)가 �
 **해결 방법:**
 1. **Command (⌘) 키** 누르기
 2. 메뉴 바에서 마우스로 아이콘 드래그
-3. ClaudeUsage 아이콘을 메뉴 바 오른쪽 보이는 영역으로 드래그
+3. Usage Meter 아이콘을 메뉴 바 오른쪽 보이는 영역으로 드래그
 4. 마우스 놓기
 
 **참고:**
@@ -400,7 +400,7 @@ A: macOS 시스템 또는 타사 소프트웨어(Bartender, Hidden Bar 등)가 �
 <details>
 <summary><b>Q: 여러 계정을 어떻게 관리하나요?</b></summary>
 
-A: ClaudeUsage는 Claude 다중 계정, 동일 Claude 계정 하 다중 조직, 독립적인 Codex 계정 관리를 지원합니다:
+A: Usage Meter는 Claude 다중 계정, 동일 Claude 계정 하 다중 조직, 독립적인 Codex 계정 관리를 지원합니다:
 - **계정 추가** - 설정 → 인증에서 Claude 브라우저 로그인, Claude 수동 입력 또는 Codex 브라우저 로그인으로 추가
 - **계정 전환** - 상세 창에서 "…" 메뉴 또는 메뉴 바 아이콘 우클릭으로 전환할 Claude / Codex 계정 선택
 - **별명 편집** - 각 계정에 쉽게 식별할 수 있는 별명 설정
@@ -584,8 +584,8 @@ Copyright (c) 2025-2026 f-is-h
 
 ## 📞 연락처
 
-- **Issues**: [문제 또는 제안 제출](https://github.com/sirpooya/osx-claude-usage/issues)
-- **Discussions**: [토론 참여](https://github.com/sirpooya/osx-claude-usage/discussions)
+- **Issues**: [문제 또는 제안 제출](https://github.com/sirpooya/osx-usage-meter/issues)
+- **Discussions**: [토론 참여](https://github.com/sirpooya/osx-usage-meter/discussions)
 - **GitHub**: [@f-is-h](https://github.com/f-is-h)
 
 ---
@@ -602,6 +602,6 @@ Copyright (c) 2025-2026 f-is-h
 
 Made with ❤️ by [f-is-h](https://github.com/f-is-h)
 
-[⬆ 맨 위로](#claudeusage)
+[⬆ 맨 위로](#usage-meter)
 
 </div>

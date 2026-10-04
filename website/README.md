@@ -1,13 +1,13 @@
-# ClaudeUsage Website
+# Usage Meter Website
 
-Product website for ClaudeUsage macOS application.
+Product website for Usage Meter macOS application.
 
 ## Project Information
 
 - **Tech Stack**: HTML5 + Tailwind CSS (CDN) + Vanilla JS
 - **Deployment**: Cloudflare Pages
 - **Languages**: English (main), Simplified Chinese, Japanese, Traditional Chinese
-- **Website URL**: https://claudeusage.pages.dev (to be deployed)
+- **Website URL**: https://usagemeter.pages.dev (to be deployed)
 
 ## Directory Structure
 
@@ -77,7 +77,7 @@ Root directory: website
 
 1. **Connect Repository**
    - Go to Cloudflare Dashboard → Pages
-   - Connect GitHub repository: `sirpooya/osx-claude-usage`
+   - Connect GitHub repository: `sirpooya/osx-usage-meter`
    - Select root directory: `website`
 
 2. **Replace Address Placeholder**
@@ -154,8 +154,8 @@ A: Edit the CDN link in HTML:
 ## Technical Support
 
 For issues or questions:
-- GitHub Issues: https://github.com/sirpooya/osx-claude-usage/issues
-- GitHub Discussions: https://github.com/sirpooya/osx-claude-usage/discussions
+- GitHub Issues: https://github.com/sirpooya/osx-usage-meter/issues
+- GitHub Discussions: https://github.com/sirpooya/osx-usage-meter/discussions
 
 ---
 

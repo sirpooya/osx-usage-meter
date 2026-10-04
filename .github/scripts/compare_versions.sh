@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ClaudeUsage - Version Comparison and Validation
+# UsageMeter - Version Comparison and Validation
 # This script compares semantic versions and validates new releases
 
 set -e

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Capture ClaudeUsage Screenshots"
-  short_description: "Automate CleanShot screenshots of ClaudeUsage"
-  default_prompt: "Use $capture-claudeusage-screenshots to capture localized ClaudeUsage window screenshots with CleanShot."

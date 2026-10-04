@@ -131,7 +131,7 @@ private func updateMenuBarIcon(percentage: Double) {
 
 ### 1. 创建 ImageHelper 工具类
 
-**新文件：** `ClaudeUsage/Helpers/ImageHelper.swift`
+**新文件：** `UsageMeter/Helpers/ImageHelper.swift`
 
 **收益：**
 - 消除 24 行重复代码
@@ -191,7 +191,7 @@ NotificationCenter.default.publisher(for: .openSettings)
 | `ClaudeAPIService.swift` | 增强 | 请求取消、错误处理 |
 | `SettingsView.swift` | 重构 | 移除重复代码、添加验证 |
 | `UsageDetailView.swift` | 重构 | 移除重复代码 |
-| `ClaudeUsageMonitorApp.swift` | 现代化 | Combine 替代 |
+| `UsageMeterApp.swift` | 现代化 | Combine 替代 |
 | `ImageHelper.swift` | **新建** | 统一图标创建 |
 
 ---

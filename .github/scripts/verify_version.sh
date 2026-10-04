@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ClaudeUsage - Version Verification Script
+# UsageMeter - Version Verification Script
 # This script extracts and verifies version numbers from CHANGELOG.md and Xcode project
 
 set -e
@@ -123,8 +123,8 @@ show_usage() {
     echo ""
     echo "Examples:"
     echo "  $0 extract-changelog CHANGELOG.md"
-    echo "  $0 extract-xcode ClaudeUsage.xcodeproj"
-    echo "  $0 verify CHANGELOG.md ClaudeUsage.xcodeproj"
+    echo "  $0 extract-xcode UsageMeter.xcodeproj"
+    echo "  $0 verify CHANGELOG.md UsageMeter.xcodeproj"
 }
 
 # Check arguments

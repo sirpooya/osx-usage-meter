@@ -2,15 +2,15 @@
 #
 # diagnose.sh
 #
-# Prints everything known about why ClaudeUsage stopped running.
+# Prints everything known about why UsageMeter stopped running.
 # Run it right after the app disappears.
 #
 #   ./scripts/diagnose.sh
 #
 set -uo pipefail
 
-BUNDLE_ID="com.claudeusage.ClaudeUsage"
-LOG_DIR="$HOME/Library/Application Support/ClaudeUsage/logs"
+BUNDLE_ID="in.pooya.usagemeter"
+LOG_DIR="$HOME/Library/Application Support/UsageMeter/logs"
 HOURS="${1:-24}"
 
 bold() { printf "\033[1m%s\033[0m\n" "$1"; }
@@ -35,15 +35,15 @@ run_log_query() {
     fi
 }
 
-bold "ClaudeUsage diagnostics"
+bold "UsageMeter diagnostics"
 printf 'generated %s, looking back %sh\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$HOURS"
 rule
 
 # 1. Is it even running? A menu bar app can be alive with no visible icon,
 #    which is a Control Center problem and not a crash at all.
 bold "1. Process state"
-if pgrep -x ClaudeUsage >/dev/null 2>&1; then
-    ps -o pid,etime,rss,%cpu,command -p "$(pgrep -x ClaudeUsage | head -1)"
+if pgrep -x UsageMeter >/dev/null 2>&1; then
+    ps -o pid,etime,rss,%cpu,command -p "$(pgrep -x UsageMeter | head -1)"
     echo "Running. If you cannot see the menu bar icon, the process is fine and"
     echo "Control Center is hiding it. See the menubar-fix skill."
 else
@@ -86,7 +86,7 @@ for dir in "$HOME/Library/Logs/DiagnosticReports" "/Library/Logs/DiagnosticRepor
         FOUND=1
         echo "--- $report"
         head -20 "$report"
-    done < <(find "$dir" -maxdepth 1 \( -iname "ClaudeUsage*" -o -iname "Usage4Claude*" \) -mtime -7 2>/dev/null)
+    done < <(find "$dir" -maxdepth 1 \( -iname "UsageMeter*" -o -iname "Usage4Claude*" \) -mtime -7 2>/dev/null)
 done
 if [[ "$FOUND" -eq 0 ]]; then
     echo "No crash reports in the last 7 days."
@@ -100,20 +100,20 @@ rule
 bold "5. Memory pressure and jetsam"
 # Scoped to the process name so the query stays fast. An unscoped
 # system-wide log show over 24h can take minutes.
-run_log_query 'eventMessage CONTAINS "jetsam" AND eventMessage CONTAINS[c] "ClaudeUsage"' 
+run_log_query 'eventMessage CONTAINS "jetsam" AND eventMessage CONTAINS[c] "UsageMeter"' 
 echo "(no output above means no jetsam kill was recorded for this app)"
 rule
 
 # 6. Control Center blocking. The specific macOS 26 failure where the icon
 #    vanishes and the app looks like it quit.
 bold "6. Control Center status item blocking"
-run_log_query '(eventMessage CONTAINS "blocked list" OR eventMessage CONTAINS "Moving host") AND eventMessage CONTAINS[c] "claudeusage"' 
+run_log_query '(eventMessage CONTAINS "blocked list" OR eventMessage CONTAINS "Moving host") AND eventMessage CONTAINS[c] "usagemeter"' 
 echo "(no output above means the status item was not blocked)"
 rule
 
 # 7. The app's own recent errors, which bound the time of death.
 bold "7. Recent app errors and warnings"
-LATEST_LOG="$(find "$LOG_DIR" -maxdepth 1 -name "claudeusage_*.log" -type f 2>/dev/null | sort | tail -1)"
+LATEST_LOG="$(find "$LOG_DIR" -maxdepth 1 -name "usagemeter_*.log" -type f 2>/dev/null | sort | tail -1)"
 if [[ -n "$LATEST_LOG" ]]; then
     echo "from $LATEST_LOG"
     grep -E "\[(ERROR|WARNING)\]" "$LATEST_LOG" 2>/dev/null | tail -30

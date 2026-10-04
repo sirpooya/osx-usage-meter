@@ -1,11 +1,11 @@
 ---
 name: release
-description: 发布 ClaudeUsage 新版本时使用。当用户说“发布新版本 / 发版 / 出新版 / release / 打 tag 发布 / 准备发版材料”等，用本 skill 引导完成从收集变更、编写 CHANGELOG 与 RELEASE_NOTES、更新版本号、编译验证，到发版 commit、CI 自动发布的完整流程。
+description: 发布 Usage Meter 新版本时使用。当用户说“发布新版本 / 发版 / 出新版 / release / 打 tag 发布 / 准备发版材料”等，用本 skill 引导完成从收集变更、编写 CHANGELOG 与 RELEASE_NOTES、更新版本号、编译验证，到发版 commit、CI 自动发布的完整流程。
 ---
 
 # 发布新版本（Release）
 
-ClaudeUsage 采用 **CI 自动发布**：向 `main` push 一个满足条件的 commit 后，
+Usage Meter 采用 **CI 自动发布**：向 `main` push 一个满足条件的 commit 后，
 GitHub Actions（`.github/workflows/release.yml`）自动完成构建、签名、发 Release、
 更新 Sparkle 更新源。你（Claude）的职责是准备好发版材料并引导用户完成触发，
 **不代替用户执行发版 commit 与 push**。
@@ -77,7 +77,7 @@ git log "$LAST_TAG"..HEAD --merges --format='%h %s'  # 合并的 PR（用于致�
 - **新功能的后续修改/优化/bug 修复并入该功能条目**，不在 Fixed 里重复列出。
 - 每个变更点一条，不同变更点只出现一次，简洁不赘述。
 - **更新文件底部版本链接**：新增
-  `[X.Y.Z]: https://github.com/sirpooya/osx-claude-usage/releases/tag/vX.Y.Z`
+  `[X.Y.Z]: https://github.com/sirpooya/osx-usage-meter/releases/tag/vX.Y.Z`
 
 **3b. docs/RELEASE_NOTES.md（面向用户 + 致谢）**
 - 在文件顶部插入 `## [X.Y.Z] - 当天日期` 段落（结构同 CHANGELOG）。
@@ -85,8 +85,8 @@ git log "$LAST_TAG"..HEAD --merges --format='%h %s'  # 合并的 PR（用于致�
 - 收集本版本对应的 **已合并 PR** 与 **已解决 Issue** 及作者，条目末尾致谢
   `(thanks @author, #N)`：
   ```bash
-  gh pr view <n> --repo sirpooya/osx-claude-usage --json number,title,author,state
-  gh issue view <n> --repo sirpooya/osx-claude-usage --json number,title,author,state
+  gh pr view <n> --repo sirpooya/osx-usage-meter --json number,title,author,state
+  gh issue view <n> --repo sirpooya/osx-usage-meter --json number,title,author,state
   ```
   **只对确已合并的 PR / 确已解决的 Issue 致谢**。未合并的 PR、仍 Open 且本次并未真正
   修复的 Issue **不致谢**，避免误导用户（硬规则）。
@@ -100,8 +100,8 @@ AskUserQuestion 让用户确认草稿再继续。
 
 ```bash
 sed -i '' 's/MARKETING_VERSION = <旧版本>;/MARKETING_VERSION = <新版本>;/g' \
-  ClaudeUsage.xcodeproj/project.pbxproj
-grep -n "MARKETING_VERSION" ClaudeUsage.xcodeproj/project.pbxproj  # 确认两处都改了
+  UsageMeter.xcodeproj/project.pbxproj
+grep -n "MARKETING_VERSION" UsageMeter.xcodeproj/project.pbxproj  # 确认两处都改了
 ```
 
 CHANGELOG 版本与 Xcode 版本**必须完全一致**，否则 CI 的 `verify_version.sh` 会失败。
@@ -110,13 +110,13 @@ RELEASE_NOTES 也必须有同一版本段落（CI validate 会 fail-fast）。
 ### 5. 编译验证
 
 ```bash
-xcodebuild -project ClaudeUsage.xcodeproj -scheme ClaudeUsage -configuration Release build 2>&1 | tail -5
+xcodebuild -project UsageMeter.xcodeproj -scheme UsageMeter -configuration Release build 2>&1 | tail -5
 ```
 
 看到 `** BUILD SUCCEEDED **` 后，核对产物版本号：
 
 ```bash
-APP=$(find ~/Library/Developer/Xcode/DerivedData -name ClaudeUsage.app -path '*/Release/*' | head -1)
+APP=$(find ~/Library/Developer/Xcode/DerivedData -name UsageMeter.app -path '*/Release/*' | head -1)
 /usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$APP/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$APP/Contents/Info.plist"  # 应与 Version 相同
 ```
@@ -142,7 +142,7 @@ APP=$(find ~/Library/Developer/Xcode/DerivedData -name ClaudeUsage.app -path '*/
 
 ```bash
 gh run list --workflow=release.yml --limit 3
-gh run watch                     # 或看 https://github.com/sirpooya/osx-claude-usage/actions
+gh run watch                     # 或看 https://github.com/sirpooya/osx-usage-meter/actions
 ```
 
 CI 三段：validate（版本校验 + RELEASE_NOTES 段落校验）→ build（构建签名，约 8 分钟）→
@@ -167,9 +167,9 @@ CI 已用 RELEASE_NOTES 自动发布了面向用户的 Release，且 Sparkle 弹
 **① 本地预览（零风险，什么都不发）**
 ```bash
 swift test                                                          # 单元测试
-xcodebuild -project ClaudeUsage.xcodeproj -scheme ClaudeUsage \
+xcodebuild -project UsageMeter.xcodeproj -scheme UsageMeter \
   -configuration Release build                                      # 能否编译
-.github/scripts/verify_version.sh verify CHANGELOG.md ClaudeUsage.xcodeproj  # 版本号一致性
+.github/scripts/verify_version.sh verify CHANGELOG.md UsageMeter.xcodeproj  # 版本号一致性
 .github/scripts/generate_release_notes.sh \
   .github/RELEASE_TEMPLATE.md <版本> /tmp/rn_preview.md docs/RELEASE_NOTES.md      # 预览 Release 正文
 ./scripts/build.sh --config Release                                # 本地打 DMG，验证打包脚本

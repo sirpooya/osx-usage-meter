@@ -2,7 +2,7 @@
 """
 Localization consistency checker (audit report 七/7.2 LLM 协作效率).
 
-Verifies that every ClaudeUsage/Resources/*.lproj/Localizable.strings file
+Verifies that every UsageMeter/Resources/*.lproj/Localizable.strings file
 defines the same set of keys as the English baseline, contains no duplicate
 keys within a single file, and matches the keys actually referenced from
 Swift source via localized("..."). A silent mismatch here means a language
@@ -17,8 +17,8 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).parent.parent
-RESOURCES_DIR = REPO_ROOT / "ClaudeUsage" / "Resources"
-SOURCE_DIR = REPO_ROOT / "ClaudeUsage"
+RESOURCES_DIR = REPO_ROOT / "UsageMeter" / "Resources"
+SOURCE_DIR = REPO_ROOT / "UsageMeter"
 BASE_LANGUAGE = "en"
 
 # Matches a single "key" = "value"; line. Both key and value may contain

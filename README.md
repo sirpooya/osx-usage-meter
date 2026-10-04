@@ -1,4 +1,4 @@
-# ClaudeUsage
+# Usage Meter
 
 [English](README.md) | [日本語](docs/README.ja.md) | [简体中文](docs/README.zh-CN.md) | [繁體中文](docs/README.zh-TW.md) | [한국어](docs/README.ko.md) | [Français](docs/README.fr.md) | [Deutsch](docs/README.de.md)
 
@@ -10,8 +10,8 @@
 [![Swift](https://img.shields.io/badge/Swift-6-orange?style=flat-square)](https://swift.org)
 [![SwiftUI](https://img.shields.io/badge/SwiftUI-✓-green?style=flat-square)](https://developer.apple.com/xcode/swiftui/)
 [![License](https://img.shields.io/badge/License-MIT-purple?style=flat-square)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/sirpooya/osx-claude-usage?style=flat-square)](https://github.com/sirpooya/osx-claude-usage/releases)
-[![Downloads (all assets, all releases)](https://img.shields.io/github/downloads/sirpooya/osx-claude-usage/total)](https://github.com/sirpooya/osx-claude-usage/releases)
+[![Release](https://img.shields.io/github/v/release/sirpooya/osx-usage-meter?style=flat-square)](https://github.com/sirpooya/osx-usage-meter/releases)
+[![Downloads (all assets, all releases)](https://img.shields.io/github/downloads/sirpooya/osx-usage-meter/total)](https://github.com/sirpooya/osx-usage-meter/releases)
 
 **Track your Claude (and Codex) subscription quota, beautifully, in your menu bar.**
 
@@ -182,7 +182,7 @@ A single sign-in window. Claude Code users already logged in via `claude` are si
 
 ## 💾 Installation
 
-> **No prebuilt DMG yet.** The current release ([v1.1.0](https://github.com/sirpooya/osx-claude-usage/releases/tag/v1.1.0)) is source only. Build from source below until a DMG is published.
+> **No prebuilt DMG yet.** The current release ([v1.1.0](https://github.com/sirpooya/osx-usage-meter/releases/tag/v1.1.0)) is source only. Build from source below until a DMG is published.
 
 ### Build from Source
 
@@ -195,11 +195,11 @@ A single sign-in window. Claude Code users already logged in via `claude` are si
 
 ```bash
 # Clone repository
-git clone https://github.com/sirpooya/osx-claude-usage.git
-cd osx-claude-usage
+git clone https://github.com/sirpooya/osx-usage-meter.git
+cd osx-usage-meter
 
 # Open in Xcode
-open ClaudeUsage.xcodeproj
+open UsageMeter.xcodeproj
 
 # Press Cmd + R to run in Xcode
 ```
@@ -275,7 +275,7 @@ A: Two methods:
 
 **Method 2: Via System Settings**
 1. Open System Settings → General → Login Items
-2. Click "+" to add ClaudeUsage
+2. Click "+" to add Usage Meter
 
 </details>
 
@@ -344,7 +344,7 @@ You can verify all of this by reviewing the source code on GitHub!
 
 A: **Yes, it works with all Claude platforms!**
 
-Since all Claude products (Web, Claude Code, Desktop App, Mobile App, Cowork) share the same usage quota, ClaudeUsage monitors your combined usage across all platforms.
+Since all Claude products (Web, Claude Code, Desktop App, Mobile App, Cowork) share the same usage quota, Usage Meter monitors your combined usage across all platforms.
 
 Whether you're:
 - Coding in terminal with `claude code`
@@ -376,7 +376,7 @@ A: macOS system or third-party software (like Bartender, Hidden Bar, etc.) may a
 **Solution:**
 1. Hold **Command (⌘) key**
 2. Drag icons in the menu bar with mouse
-3. Drag ClaudeUsage icon to the visible area on the right side of menu bar
+3. Drag Usage Meter icon to the visible area on the right side of menu bar
 4. Release mouse
 
 **Note:**
@@ -388,7 +388,7 @@ A: macOS system or third-party software (like Bartender, Hidden Bar, etc.) may a
 <details>
 <summary><b>Q: How to manage multiple accounts?</b></summary>
 
-A: ClaudeUsage supports multiple Claude accounts, multiple organizations under the same Claude account, and independent Codex account management:
+A: Usage Meter supports multiple Claude accounts, multiple organizations under the same Claude account, and independent Codex account management:
 - **Add Account** - Add via CLI Account Sync, Claude browser login, Claude manual input, or Codex browser login in Settings → Account
 - **Switch Account** - Right-click the menu bar icon, select the Claude / Codex account to switch to
 - **Edit Alias** - Set easily recognizable aliases for each account
@@ -571,7 +571,7 @@ and/or sell copies of the Software.
 
 ## 📞 Contact
 
-- **Issues**: [Submit issues or suggestions](https://github.com/sirpooya/osx-claude-usage/issues)
+- **Issues**: [Submit issues or suggestions](https://github.com/sirpooya/osx-usage-meter/issues)
 - **GitHub**: [@f-is-h](https://github.com/f-is-h) (original Usage4Claude author)
 
 ---
@@ -588,6 +588,6 @@ This project is an independent third-party tool with no official affiliation wit
 
 Made with ❤️ by [f-is-h](https://github.com/f-is-h)
 
-[⬆ Back to Top](#claudeusage)
+[⬆ Back to Top](#usage-meter)
 
 </div>

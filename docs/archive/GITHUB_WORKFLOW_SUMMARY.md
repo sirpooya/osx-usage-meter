@@ -1,4 +1,4 @@
-# ClaudeUsage - GitHub Workflow 自动化发布总结文档
+# Usage Meter - GitHub Workflow 自动化发布总结文档
 
 > 完整记录从需求讨论到最终实现的所有决策和配置
 
@@ -124,7 +124,7 @@
 **讨论内容**: 是否需要生成SHA256文件？
 
 **最终决定**: ✅ **生成并上传SHA256校验和文件**
-- 文件命名：`ClaudeUsage-vX.Y.Z.dmg.sha256`
+- 文件命名：`UsageMeter-vX.Y.Z.dmg.sha256`
 - 与DMG一起上传到Release
 
 **理由**:
@@ -418,10 +418,10 @@ release (ubuntu, ~1min) [仅main分支]
 ./verify_version.sh extract-changelog CHANGELOG.md
 
 # 从Xcode提取版本
-./verify_version.sh extract-xcode ClaudeUsage.xcodeproj
+./verify_version.sh extract-xcode UsageMeter.xcodeproj
 
 # 验证版本匹配
-./verify_version.sh verify CHANGELOG.md ClaudeUsage.xcodeproj
+./verify_version.sh verify CHANGELOG.md UsageMeter.xcodeproj
 ```
 
 **验证规则**:
@@ -510,10 +510,10 @@ release (ubuntu, ~1min) [仅main分支]
 
 ```bash
 # 1. 在项目根目录执行
-cd /Users/iMac/Coding/Projects/ClaudeUsage
+cd /Users/iMac/Coding/Projects/UsageMeter
 
 # 2. 将.p12转换为base64
-base64 -i ClaudeUsage-CodeSigning.p12 -o cert_base64.txt
+base64 -i UsageMeter-CodeSigning.p12 -o cert_base64.txt
 
 # 3. 查看生成的base64内容
 cat cert_base64.txt
@@ -524,7 +524,7 @@ cat cert_base64.txt
 **在GitHub网页配置**:
 
 1. 访问项目设置：  
-   `https://github.com/sirpooya/osx-claude-usage/settings/secrets/actions`
+   `https://github.com/sirpooya/osx-usage-meter/settings/secrets/actions`
 
 2. 点击 "New repository secret"
 
@@ -615,18 +615,18 @@ ls -l scripts/
 **步骤**:
 
 ```bash
-cd /Users/iMac/Coding/Projects/ClaudeUsage
+cd /Users/iMac/Coding/Projects/UsageMeter
 
 # 1. 测试版本提取（从CHANGELOG）
 .github/scripts/verify_version.sh extract-changelog CHANGELOG.md
 # 预期输出: 1.1.2
 
 # 2. 测试Xcode版本提取
-.github/scripts/verify_version.sh extract-xcode ClaudeUsage.xcodeproj
+.github/scripts/verify_version.sh extract-xcode UsageMeter.xcodeproj
 # 预期输出: 1.1.2
 
 # 3. 测试版本验证
-.github/scripts/verify_version.sh verify CHANGELOG.md ClaudeUsage.xcodeproj
+.github/scripts/verify_version.sh verify CHANGELOG.md UsageMeter.xcodeproj
 # 预期输出: ✅ Version numbers match!
 
 # 4. 测试Release Notes生成
@@ -680,7 +680,7 @@ git push origin test-release
 **在GitHub观察**:
 
 1. 访问 Actions 页面：  
-   `https://github.com/sirpooya/osx-claude-usage/actions`
+   `https://github.com/sirpooya/osx-usage-meter/actions`
 
 2. 查看运行的workflow：  
    - 名称：Build and Release
@@ -726,7 +726,7 @@ git push origin test-release
 ```bash
 # 1. 下载并解压artifacts.zip
 # 2. 打开DMG文件
-open ClaudeUsage-v1.1.2.dmg
+open UsageMeter-v1.1.2.dmg
 
 # 3. 测试安装
 # 4. 验证应用可以正常运行
@@ -781,12 +781,12 @@ git checkout main
 
 # 3. 更新Xcode版本号
 # 在Xcode中：
-# Targets → ClaudeUsage → General → Version
+# Targets → Usage Meter → General → Version
 # 或 Build Settings → MARKETING_VERSION
 # 改为：1.2.0
 
 # 4. 提交
-git add CHANGELOG.md ClaudeUsage.xcodeproj
+git add CHANGELOG.md UsageMeter.xcodeproj
 git commit -m "[release] v1.2.0 - Dry run test"
 git push origin main
 ```
@@ -826,11 +826,11 @@ git push origin main
 **验证结果**:
 
 1. 检查Tags：  
-   `https://github.com/sirpooya/osx-claude-usage/tags`
+   `https://github.com/sirpooya/osx-usage-meter/tags`
    - 应该看到 `test-v1.2.0`
 
 2. 检查Releases：  
-   `https://github.com/sirpooya/osx-claude-usage/releases`
+   `https://github.com/sirpooya/osx-usage-meter/releases`
    - 应该看到Draft Release
    - 标题：`test-v1.2.0 - ⚠️ DRY RUN TEST ⚠️`
 
@@ -854,7 +854,7 @@ git push --delete origin test-v1.2.0
 # 改回：1.1.2
 
 # 5. 提交清理
-git add CHANGELOG.md ClaudeUsage.xcodeproj
+git add CHANGELOG.md UsageMeter.xcodeproj
 git commit -m "chore: revert dry run test"
 git push origin main
 ```
@@ -901,7 +901,7 @@ git push origin main
 # 在Xcode中改为：1.1.3
 
 # 4. 提交
-git add CHANGELOG.md ClaudeUsage.xcodeproj
+git add CHANGELOG.md UsageMeter.xcodeproj
 git commit -m "[release] v1.1.3"
 git push origin main
 
@@ -912,7 +912,7 @@ git push origin main
 **编辑Draft Release**:
 
 1. 收到邮件通知后，访问：  
-   `https://github.com/sirpooya/osx-claude-usage/releases`
+   `https://github.com/sirpooya/osx-usage-meter/releases`
 
 2. 找到Draft Release：  
    `v1.1.3 - ❗️❗️❗️请在这里输入你的简短描述❗️❗️❗️`
@@ -1003,12 +1003,12 @@ vim CHANGELOG.md
 
 # 1.2 更新Xcode版本号
 # 打开Xcode
-# Targets → ClaudeUsage → General → Version
+# Targets → Usage Meter → General → Version
 # 或 Build Settings → MARKETING_VERSION
 # 改为：X.Y.Z（与CHANGELOG一致）
 
 # 1.3 提交并推送
-git add CHANGELOG.md ClaudeUsage.xcodeproj
+git add CHANGELOG.md UsageMeter.xcodeproj
 git commit -m "[release] vX.Y.Z"
 git push origin main
 
@@ -1021,14 +1021,14 @@ git push origin main
 # - Workflow完成（成功/失败）
 
 # 可选：在Actions页面监控进度
-# https://github.com/sirpooya/osx-claude-usage/actions
+# https://github.com/sirpooya/osx-usage-meter/actions
 
 # ============================================
 # 步骤3: 完善Release Notes（网页，2分钟）
 # ============================================
 
 # 3.1 访问Releases页面
-# https://github.com/sirpooya/osx-claude-usage/releases
+# https://github.com/sirpooya/osx-usage-meter/releases
 
 # 3.2 找到Draft Release（标题带❗️提示）
 
@@ -1144,7 +1144,7 @@ Xcode: 1.1.3
 # Targets → Build Settings → MARKETING_VERSION
 
 # 2. 提交修复
-git add ClaudeUsage.xcodeproj
+git add UsageMeter.xcodeproj
 git commit -m "[release] v1.1.4 - Fix version number"
 git push origin main
 
@@ -1171,8 +1171,8 @@ security: SecKeychainItemImport: The specified item already exists in the keycha
 **解决方案**:
 ```bash
 # 1. 重新生成base64证书
-cd /Users/iMac/Coding/Projects/ClaudeUsage
-base64 -i ClaudeUsage-CodeSigning.p12 -o cert_new.txt
+cd /Users/iMac/Coding/Projects/UsageMeter
+base64 -i UsageMeter-CodeSigning.p12 -o cert_new.txt
 
 # 2. 更新GitHub Secrets
 # Settings → Secrets → Edit CODESIGN_CERTIFICATE
@@ -1366,7 +1366,7 @@ git tag -d test-v1.2.0
 git push --delete origin test-v1.2.0
 
 # 3. 删除GitHub Release
-# 访问: https://github.com/sirpooya/osx-claude-usage/releases
+# 访问: https://github.com/sirpooya/osx-usage-meter/releases
 # 找到test-v1.2.0
 # Edit → Delete
 
@@ -1396,7 +1396,7 @@ git tag -l
 git ls-remote --tags origin
 
 # 测试脚本
-.github/scripts/verify_version.sh verify CHANGELOG.md ClaudeUsage.xcodeproj
+.github/scripts/verify_version.sh verify CHANGELOG.md UsageMeter.xcodeproj
 ```
 
 **联系支持**:
@@ -1412,8 +1412,8 @@ git ls-remote --tags origin
 **环境变量**:
 ```yaml
 env:
-  PROJECT_NAME: ClaudeUsage
-  XCODE_PROJECT: ClaudeUsage.xcodeproj
+  PROJECT_NAME: Usage Meter
+  XCODE_PROJECT: UsageMeter.xcodeproj
   BUILD_CONFIG: Release
 ```
 
@@ -1441,10 +1441,10 @@ concurrency:
 ./verify_version.sh extract-changelog CHANGELOG.md
 
 # 提取Xcode版本
-./verify_version.sh extract-xcode ClaudeUsage.xcodeproj
+./verify_version.sh extract-xcode UsageMeter.xcodeproj
 
 # 验证版本匹配
-./verify_version.sh verify CHANGELOG.md ClaudeUsage.xcodeproj
+./verify_version.sh verify CHANGELOG.md UsageMeter.xcodeproj
 ```
 
 **generate_release_notes.sh**:
@@ -1523,7 +1523,7 @@ PATCH: 向后兼容的bug修复
 2.0.0 → 重大更新
 ```
 
-**ClaudeUsage的版本策略**:
+**Usage Meter的版本策略**:
 - 1.x.x: 正式版本
 - Bug修复: +0.0.1
 - 新功能: +0.1.0

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Static Info.plist for the ClaudeUsage app target.
+    Static Info.plist for the UsageMeter app target.
 
     Switched from Xcode's auto-generated Info.plist (GENERATE_INFOPLIST_FILE = YES)
     to this static file because third-party keys like SUFeedURL, SUPublicEDKey,
@@ -13,6 +13,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>CFBundleDisplayName</key>
+    <string>Usage Meter</string>
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleExecutable</key>
@@ -55,7 +57,7 @@
         updates whose signature doesn't match the embedded SUPublicEDKey.
     -->
     <key>SUFeedURL</key>
-    <string>https://raw.githubusercontent.com/sirpooya/osx-claude-usage/main/appcast.xml</string>
+    <string>https://raw.githubusercontent.com/sirpooya/osx-usage-meter/main/appcast.xml</string>
     <key>SUPublicEDKey</key>
     <string>XPeIzL4GHFXBMLCP+A/vxqQE4Bn8tGi7jkw9sRBHXSc=</string>
     <key>SUEnableAutomaticChecks</key>
@@ -65,7 +67,7 @@
         Under App Sandbox, Sparkle installs updates through a bundled XPC
         service (Installer.xpc). This key opts into that launcher service
         and pairs with the Sparkle mach-lookup exceptions in
-        Config/ClaudeUsage.entitlements. See the "App Sandbox" section of
+        Config/UsageMeter.entitlements. See the "App Sandbox" section of
         docs/SPARKLE_SETUP.md. (SUEnableDownloaderService is intentionally
         omitted — the app has network.client, so Sparkle downloads in-process.)
     -->

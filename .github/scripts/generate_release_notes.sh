@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ClaudeUsage - Release Notes Generator
+# UsageMeter - Release Notes Generator
 # 从模板生成 GitHub Release Notes。
 # 若提供 docs/RELEASE_NOTES.md 路径，则把当前版本段落填入模板的 {{RELEASE_NOTES}} 占位，
 # 作为 GitHub Release 正文（与 Sparkle 弹窗同源，见 update_appcast.py）。
