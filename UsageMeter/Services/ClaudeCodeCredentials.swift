@@ -56,8 +56,12 @@ struct ClaudeCodeCredentials: Equatable {
 
 /// Reading and writing Claude Code's Keychain entry
 ///
-/// Security framework only, never a spawned `security(1)`: that would put the plaintext token into another
-/// process's output pipe, and it cannot report a specific error code such as "the user denied it".
+/// Secret data goes through `/usr/bin/security`, never `SecItemCopyMatching` / `SecItemUpdate` from this app.
+/// Claude Code creates and rotates its entry with that tool, so `/usr/bin/security` sits in the entry's ACL and its
+/// `apple-tool:` partition from birth, and reading through it never prompts. Reading in process made macOS check
+/// this app against the entry instead: the "enter the login keychain password" prompt is the partition list check,
+/// and clicking Always Allow did not stop it coming back. Enumerating attributes (`listEntries`) reads no secret,
+/// so it stays on the Security framework.
 enum ClaudeCodeKeychain {
 
     /// Service name prefix of Claude Code's Keychain entries (a suffixed variant means a non default CLAUDE_CONFIG_DIR)
@@ -136,23 +140,7 @@ enum ClaudeCodeKeychain {
 
     /// Read one specific entry
     static func readCredentials(entry: Entry) -> ClaudeCodeCredentials? {
-        var query: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: entry.service,
-            kSecMatchLimit as String: kSecMatchLimitOne,
-            kSecReturnData as String: true
-        ]
-        if !entry.account.isEmpty {
-            query[kSecAttrAccount as String] = entry.account
-        }
-
-        var result: CFTypeRef?
-        let status = SecItemCopyMatching(query as CFDictionary, &result)
-        guard status == errSecSuccess, let data = result as? Data else {
-            Logger.settings.error("CLI sync: failed to read keychain item, OSStatus \(status)")
-            return nil
-        }
-
+        guard let data = readData(service: entry.service, account: entry.account) else { return nil }
         return parse(data: data, service: entry.service, account: entry.account)
     }
 
@@ -258,24 +246,101 @@ enum ClaudeCodeKeychain {
 
         guard let newData = try? JSONSerialization.data(withJSONObject: root) else { return false }
 
-        var updateQuery: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: service
-        ]
+        // `-U` updates the existing item in place, which is how Claude Code rotates it too, so the
+        // entry's ACL and partition list are untouched. The payload goes in as hex (`-X`) because
+        // `security -i` cuts stdin lines off at about 4 KB and this JSON is already over 2 KB.
+        // That leaves it visible to `ps` for the life of the call, which adds nothing: any process
+        // running as this user can already read the entry silently through `security`.
+        let hex = newData.map { String(format: "%02x", $0) }.joined()
+        var arguments = ["add-generic-password", "-U", "-s", service]
         if !account.isEmpty {
-            updateQuery[kSecAttrAccount as String] = account
+            arguments += ["-a", account]
         }
+        arguments += ["-X", hex]
 
-        let updateStatus = SecItemUpdate(
-            updateQuery as CFDictionary,
-            [kSecValueData as String: newData] as CFDictionary
-        )
-        guard updateStatus == errSecSuccess else {
-            Logger.settings.error("CLI sync: keychain write-back failed, OSStatus \(updateStatus)")
+        guard let result = runSecurity(arguments), result.status == 0 else {
+            Logger.settings.error("CLI sync: keychain write-back through security failed")
             return false
         }
 
         Logger.settings.notice("CLI sync: rotated tokens written back to the Claude Code keychain item")
         return true
+    }
+
+    // MARK: - security(1)
+
+    /// A `security` run is bounded: the tool has been seen to hang on some macOS 26 builds, and a
+    /// hung read must not stall a poll (or, from the sync service, the main thread) indefinitely.
+    private static let securityTimeout: TimeInterval = 5
+
+    /// Read an entry's secret data through `security find-generic-password -w`.
+    private static func readData(service: String, account: String) -> Data? {
+        var arguments = ["find-generic-password", "-s", service]
+        if !account.isEmpty {
+            arguments += ["-a", account]
+        }
+        arguments.append("-w")
+
+        guard let result = runSecurity(arguments) else { return nil }
+        guard result.status == 0 else {
+            // Exit 44 is "item not found"
+            Logger.settings.error("CLI sync: security could not read the keychain item, exit \(result.status)")
+            return nil
+        }
+
+        // -w prints the secret and a newline, and prints it hex encoded if it is not printable text
+        let text = String(decoding: result.output, as: UTF8.self)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        if !text.hasPrefix("{"), let decoded = hexDecoded(text) {
+            return decoded
+        }
+        return Data(text.utf8)
+    }
+
+    /// Run `/usr/bin/security`, returning its exit status and stdout, or nil if it could not be
+    /// launched or ran past `securityTimeout`.
+    private static func runSecurity(_ arguments: [String]) -> (status: Int32, output: Data)? {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/security")
+        process.arguments = arguments
+        let stdout = Pipe()
+        process.standardOutput = stdout
+        process.standardError = FileHandle.nullDevice
+        process.standardInput = FileHandle.nullDevice
+
+        let exited = DispatchSemaphore(value: 0)
+        process.terminationHandler = { _ in exited.signal() }
+
+        do {
+            try process.run()
+        } catch {
+            Logger.settings.error("CLI sync: could not launch security, \(error.localizedDescription)")
+            return nil
+        }
+
+        guard exited.wait(timeout: .now() + securityTimeout) == .success else {
+            process.terminate()
+            Logger.settings.error("CLI sync: security did not finish within \(securityTimeout)s")
+            return nil
+        }
+
+        // A few KB of output, far under the pipe buffer, so reading after exit cannot deadlock
+        let output = stdout.fileHandleForReading.readDataToEndOfFile()
+        return (process.terminationStatus, output)
+    }
+
+    private static func hexDecoded(_ text: String) -> Data? {
+        let bytes = Array(text.utf8)
+        guard !bytes.isEmpty, bytes.count.isMultiple(of: 2) else { return nil }
+        var data = Data(capacity: bytes.count / 2)
+        var index = 0
+        while index < bytes.count {
+            guard let byte = UInt8(String(decoding: bytes[index..<index + 2], as: UTF8.self), radix: 16) else {
+                return nil
+            }
+            data.append(byte)
+            index += 2
+        }
+        return data
     }
 }

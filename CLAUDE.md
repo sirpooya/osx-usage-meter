@@ -1152,6 +1152,25 @@ Things to keep, or the prompt comes back:
 - `removeSync()` calls `ClaudeTokenMirror.clear()`, or the mirror keeps serving polls for an
   account the user just removed.
 
+**The mirror was not enough (2026-10-05).** The prompt kept coming back, with a password field,
+after Always Allow. Two facts behind it:
+
+- The password field means the **partition list** check, not the ACL. Claude Code's item lists
+  `apple-tool:, teamid:37MA269X54` (our team) and its ACL trusts `/usr/bin/security` from birth,
+  because Claude Code creates and rotates the item with that tool.
+- `writeBackByService` **read** their item in process before writing (`SecItemCopyMatching`), on
+  every mirror refresh. So "writing does not prompt" was true, and the write-back prompted anyway.
+
+Fix in progress, in `ClaudeCodeCredentials.swift`: secret access to Claude Code's item goes through
+`/usr/bin/security` (bounded 5s `Process`), which that item always trusts, so no prompt is possible.
+Done: `readCredentials(entry:)` (`find-generic-password -w`) and the write itself
+(`add-generic-password -U ... -X <hex>`; `security -i` over stdin truncates lines at ~4 KB and the
+payload is 2.3 KB, 4.6 KB as hex, so the hex goes in argv; any same-user process can already read
+the item silently through `security`, so that exposes nothing new). **Not done:** the read at the
+top of `writeBackByService` is still `SecItemCopyMatching`, so the hourly write-back can still
+prompt. The edit switching it to `readData(service:account:)` was blocked by the auto-mode
+classifier and awaits Pooya's go-ahead.
+
 Still worth doing by hand: the 102 stale `cdhash` entries on Claude Code's item are inert but
 untidy. Pruning them needs the Keychain password (Keychain Access > that item > Access Control),
 and nothing in the app depends on it now that the hot path avoids that item entirely.
