@@ -963,6 +963,9 @@ What has been changed from upstream so far:
   same divider that percentage only mode uses, instead of the `CodexIcon` clock artwork. The
   Claude app icon still leads the bar. The Codex brand still shows in the Codex only layout,
   where nothing else would say whose rings they are.
+  - **That separator is a dot now, not a line** (`createMenuBarDotSeparatorIcon`, 3pt dot in a
+    7pt slot at 0.55 alpha; black in template mode, `menuBarForeground(for:)` in colour mode).
+    `createMenuBarDividerIcon`'s line is still the anchor for the no-icon display mode.
 - **The limit type checkboxes are real checkboxes now.** `LimitTypeCheckbox` was a plain `Button`
   drawing `checkmark.square.fill` / `square` SF Symbols: recognisable but not an AppKit checkbox,
   so it had the wrong box size, corner radius and blue, no focus ring, no mixed state and none of

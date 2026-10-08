@@ -144,10 +144,10 @@ class MenuBarIconRenderer {
             // Codex part
             let codexIcons = buildCodexIcons(codex: codex, types: codexTypes, isMonochrome: isMonochrome, button: button)
             if !codexIcons.isEmpty {
-                // With Claude's rings in front, the divider alone separates the groups in both
+                // With Claude's rings in front, a dot alone separates the groups in both
                 // modes; the Codex brand icon only appears when it would otherwise lead the bar.
                 if !claudeIcons.isEmpty {
-                    icons.append(createMenuBarDividerIcon(isMonochrome: isMonochrome))
+                    icons.append(createMenuBarDotSeparatorIcon(isMonochrome: isMonochrome, button: button))
                 } else if settings.iconDisplayMode == .both,
                    let brand = createProviderBrandIcon(.codex, isMonochrome: isMonochrome, size: providerBrandIconSize) {
                     icons.append(brand)
@@ -741,6 +741,25 @@ class MenuBarIconRenderer {
             lineColor.withAlphaComponent(0.0)
         ])
         gradient?.draw(in: linePath, angle: 90)
+
+        image.unlockFocus()
+        if isMonochrome { image.isTemplate = true }
+        return image
+    }
+
+    /// Create the dot that separates the Claude and Codex groups
+    private func createMenuBarDotSeparatorIcon(isMonochrome: Bool, button: NSStatusBarButton?) -> NSImage {
+        let width: CGFloat = 7
+        let height: CGFloat = metricIconSize
+        let diameter: CGFloat = 3
+        let image = NSImage(size: NSSize(width: width, height: height))
+        image.lockFocus()
+
+        let dotRect = NSRect(x: (width - diameter) / 2, y: (height - diameter) / 2, width: diameter, height: diameter)
+        // Template keeps only alpha; colour mode resolves against the bar, not the app
+        let dotColor = isMonochrome ? NSColor.black : UsageColorScheme.menuBarForeground(for: button)
+        dotColor.withAlphaComponent(0.55).setFill()
+        NSBezierPath(ovalIn: dotRect).fill()
 
         image.unlockFocus()
         if isMonochrome { image.isTemplate = true }
