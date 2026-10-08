@@ -1222,6 +1222,12 @@ class UserSettings: ObservableObject {
             if shouldIncludeCodexTypes {
                 orderedTypes.append(contentsOf: [.codexPrimary, .codexSecondary, .codexExtraUsage])
             }
+            // Some Codex plans (self_serve_business_prolite) have no 5 hour window at all: the API and
+            // the Codex CLI both see only the 7 day one. Drop the row once data has arrived without it,
+            // rather than rendering a permanent empty "5-Hour Limit · -" bar. Kept while still loading.
+            if let codex = codexUsageData, codex.primary == nil {
+                orderedTypes.removeAll { $0 == .codexPrimary }
+            }
             return orderedTypes.filter { customDisplayTypes.contains($0) }
         }
     }

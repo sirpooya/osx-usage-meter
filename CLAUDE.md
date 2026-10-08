@@ -995,6 +995,15 @@ What has been changed from upstream so far:
   `LimitType.groupedName`, which maps the three Codex types to Claude's labels (5-Hour Limit,
   Weekly All Models, Extra Usage, same as the popover). Notifications still use `displayName`. The two provider headings replace the single "Select Limits" caption;
   `L.Welcome.selectLimits` is now unused here but kept. Names are brands, so not localized.
+- **Codex 5-Hour row hides itself when Codex sends no 5 hour window.** Custom mode used to list
+  every ticked type whether or not data existed, so a plan without that window showed a permanent
+  `5-Hour Limit · -` row. `self_serve_business_prolite` (this machine's Codex plan) has **no 5 hour
+  limit at all**: `wham/usage` returns only a 7 day `primary_window` with `secondary_window: null`,
+  and the Codex CLI's own session log (`rate_limits` in `~/.codex/sessions/**.jsonl`) sees the same,
+  `window_minutes: 10080`, `secondary: null`. So it is OpenAI's plan, not a parsing bug.
+  `getActiveDisplayTypes`' custom branch now drops `.codexPrimary` once Codex data has arrived
+  without it (kept while still loading). Smart mode already did this. One filter covers the popover
+  column, its height (`codexRowCount`) and the menu bar, since every Codex call site passes the data.
 - **The Color By picker sits in a `SettingRow`**, label left and segments right with the
   description underneath, the same shape as every switch in that card. Stacked full width under
   its own heading it read as a different kind of setting from its neighbours and left the row's
