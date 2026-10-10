@@ -202,7 +202,7 @@ final class ClaudeOAuthCoordinator: ObservableObject {
         }
     }
 
-    private func createAccount(tokens: ClaudeOAuthTokens, profile: Result<(email: String, orgId: String, orgName: String, tier: String), Error>) {
+    private func createAccount(tokens: ClaudeOAuthTokens, profile: Result<(email: String, orgId: String, orgName: String, tier: String, rateLimitTier: String), Error>) {
         guard !finished else { return }
 
         var email = ""
@@ -213,6 +213,9 @@ final class ClaudeOAuthCoordinator: ObservableObject {
             // Tier for the popover title; a browser login has no Keychain entry to fall back on
             if !p.tier.isEmpty {
                 UserSettings.shared.claudeSubscriptionTier = p.tier
+            }
+            if !p.rateLimitTier.isEmpty {
+                UserSettings.shared.claudeRateLimitTier = p.rateLimitTier
             }
         }
         let displayName = email.isEmpty ? "Claude" : email

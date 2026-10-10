@@ -27,8 +27,7 @@ struct GeneralSettingsView: View {
                 SettingSection(
                     icon: "clock.arrow.trianglehead.2.counterclockwise.rotate.90",
                     iconColor: .green,
-                    title: L.SettingsGeneral.refreshSection,
-                    hint: settings.refreshMode == .smart ? L.SettingsGeneral.refreshHintSmart : L.SettingsGeneral.refreshHintFixed
+                    title: L.SettingsGeneral.refreshSection
                 ) {
                     VStack(alignment: .leading, spacing: 12) {
                         // Refresh mode picker
@@ -67,8 +66,7 @@ struct GeneralSettingsView: View {
                 SettingSection(
                     icon: "bell.badge",
                     iconColor: .red,
-                    title: L.SettingsNotification.section,
-                    hint: L.SettingsNotification.description
+                    title: L.SettingsNotification.section
                 ) {
                     SettingToggleRow(
                         title: L.SettingsNotification.enable,
@@ -80,8 +78,7 @@ struct GeneralSettingsView: View {
                 SettingSection(
                     icon: "power",
                     iconColor: .orange,
-                    title: L.SettingsGeneral.launchSection,
-                    hint: L.SettingsGeneral.launchHint
+                    title: L.SettingsGeneral.launchSection
                 ) {
                     SettingRow(title: L.SettingsGeneral.launchAtLogin) {
                         // The status badge only earns its place when the user has to do
@@ -111,8 +108,7 @@ struct GeneralSettingsView: View {
                 SettingSection(
                     icon: "globe",
                     iconColor: .orange,
-                    title: L.SettingsGeneral.languageSection,
-                    hint: L.SettingsGeneral.languageHint
+                    title: L.SettingsGeneral.languageSection
                 ) {
                     Picker("", selection: $settings.language) {
                         ForEach(AppLanguage.allCases, id: \.self) { lang in

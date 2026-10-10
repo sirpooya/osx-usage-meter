@@ -61,7 +61,7 @@ enum ClaudeOAuthService {
     /// The organization uuid is used as the account's organizationId (the same dedupe identity as older cookie accounts, which eases migration)
     static func fetchProfile(
         accessToken: String,
-        completion: @escaping (Result<(email: String, orgId: String, orgName: String, tier: String), Error>) -> Void
+        completion: @escaping (Result<(email: String, orgId: String, orgName: String, tier: String, rateLimitTier: String), Error>) -> Void
     ) {
         guard let url = URL(string: ClaudeOAuthConfig.profileURL) else {
             completion(.failure(UsageError.invalidURL))
@@ -92,7 +92,9 @@ enum ClaudeOAuthService {
                     tier = "pro"
                 }
             }
-            completion(.success((email: email, orgId: orgId, orgName: orgName, tier: tier)))
+            // Sizes the limits, so it tells a Team Premium seat from a Standard one
+            let rateLimitTier = org?["rate_limit_tier"] as? String ?? ""
+            completion(.success((email: email, orgId: orgId, orgName: orgName, tier: tier, rateLimitTier: rateLimitTier)))
         }.resume()
     }
 

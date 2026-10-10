@@ -34,6 +34,8 @@ struct ClaudeCodeCredentials: Equatable {
     let scopes: [String]
     /// Subscription type ("team" / "max" / "pro" and so on), an empty string when absent
     let subscriptionType: String
+    /// Rate limit tier ("default_claude_max_5x" and so on), an empty string when absent
+    let rateLimitTier: String
 
     /// Whether this access_token is still usable (with a 2 minute margin, to avoid the boundary)
     var isAccessTokenUsable: Bool {
@@ -166,7 +168,8 @@ enum ClaudeCodeKeychain {
             refreshToken: refreshToken,
             expiresAt: expiryDate(from: oauth["expiresAt"]),
             scopes: oauth["scopes"] as? [String] ?? [],
-            subscriptionType: oauth["subscriptionType"] as? String ?? ""
+            subscriptionType: oauth["subscriptionType"] as? String ?? "",
+            rateLimitTier: oauth["rateLimitTier"] as? String ?? ""
         )
     }
 

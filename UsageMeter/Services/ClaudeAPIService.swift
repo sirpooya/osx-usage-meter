@@ -491,9 +491,12 @@ class ClaudeAPIService {
             // Claude Code's item is only read when we have no mirror yet, or when the mirror's
             // refresh_token has stopped working. See ClaudeTokenMirror for why.
             if let mirrored = ClaudeTokenMirror.load() {
-                self.publishTier(mirrored.subscriptionType)
+                self.publishTier(mirrored.subscriptionType, rateLimitTier: mirrored.rateLimitTier ?? "")
 
                 if mirrored.isAccessTokenUsable {
+                    if mirrored.rateLimitTier == nil {
+                        self.backfillRateLimitTier(mirrored)
+                    }
                     self.fetchClaudeOAuthUsageData(
                         accessToken: mirrored.accessToken,
                         retryOnUnauthorized: retryOnUnauthorized,
@@ -533,11 +536,26 @@ class ClaudeAPIService {
         }
     }
 
+    /// A mirror written before the rate limit tier was kept has none. Fill it once from the profile
+    /// endpoint (a plain request, no Keychain read) and store it, so this happens a single time.
+    private func backfillRateLimitTier(_ mirrored: ClaudeTokenMirror.Mirrored) {
+        ClaudeOAuthService.fetchProfile(accessToken: mirrored.accessToken) { result in
+            guard case .success(let profile) = result else { return }
+            var updated = ClaudeTokenMirror.load() ?? mirrored
+            updated.rateLimitTier = profile.rateLimitTier
+            ClaudeTokenMirror.save(updated)
+            self.publishTier(mirrored.subscriptionType, rateLimitTier: profile.rateLimitTier)
+        }
+    }
+
     /// Push the subscription type to the popover title ("Claude Team"), on the main thread.
-    private func publishTier(_ tier: String) {
+    private func publishTier(_ tier: String, rateLimitTier: String) {
         guard !tier.isEmpty else { return }
         DispatchQueue.main.async {
             UserSettings.shared.claudeSubscriptionTier = tier
+            if !rateLimitTier.isEmpty {
+                UserSettings.shared.claudeRateLimitTier = rateLimitTier
+            }
         }
     }
 
@@ -559,7 +577,7 @@ class ClaudeAPIService {
         // The entry carries the subscription type, so the popover title can read "Claude Team".
         // Refreshed here rather than only at sync time, so an account that synced before this
         // existed, or one whose plan changed, still ends up with the right tier.
-        publishTier(credentials.subscriptionType)
+        publishTier(credentials.subscriptionType, rateLimitTier: credentials.rateLimitTier)
 
         // Mirror straight away, so the next poll does not have to come back here.
         ClaudeTokenMirror.save(from: credentials)

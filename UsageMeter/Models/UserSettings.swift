@@ -442,7 +442,40 @@ class UserSettings: ObservableObject {
     /// server, so a tier this build has never heard of still prints instead of vanishing.
     /// Empty for the tiers not worth a badge (no subscription, or nothing known yet).
     var claudeSubscriptionTierLabel: String {
-        Self.planLabel(claudeSubscriptionTier, dropPrefix: "claude_")
+        let plan = Self.planLabel(claudeSubscriptionTier, dropPrefix: "claude_")
+        guard !plan.isEmpty, let seat = Self.seatLabel(plan: plan, rateLimitTier: claudeRateLimitTier) else {
+            return plan
+        }
+        return "\(plan) \(seat)"
+    }
+
+    /// The account's rate limit tier (`rateLimitTier` in Claude Code's Keychain entry, or
+    /// `organization.rate_limit_tier` from the profile, e.g. "default_claude_max_5x"). It is what
+    /// actually sizes the usage limits, so it tells a Team Premium seat from a Standard one.
+    /// Cached alongside `claudeSubscriptionTier`; empty means unknown.
+    @Published var claudeRateLimitTier: String {
+        didSet {
+            guard claudeRateLimitTier != oldValue else { return }
+            defaults.set(claudeRateLimitTier, forKey: "claude.rateLimitTier")
+        }
+    }
+
+    /// The seat or usage multiplier that follows the plan name: "Team Premium", "Max 20x".
+    /// nil when the tier is unknown or adds nothing (Pro has one size).
+    /// Team and Enterprise seats on a Max rate limit tier are Premium seats, anything else is Standard.
+    private static func seatLabel(plan: String, rateLimitTier: String) -> String? {
+        let tier = rateLimitTier.lowercased()
+        guard !tier.isEmpty else { return nil }
+        let multiplier = tier.range(of: #"max_(\d+)x"#, options: .regularExpression)
+            .map { tier[$0].dropFirst(4) }   // "5x" / "20x"
+        switch plan.lowercased() {
+        case "team", "enterprise":
+            return multiplier == nil ? "Standard" : "Premium"
+        case "max":
+            return multiplier.map(String.init)
+        default:
+            return nil
+        }
     }
 
     /// The Codex account's plan (`plan_type` from the wham/usage response: plus, pro, team...),
@@ -454,8 +487,20 @@ class UserSettings: ObservableObject {
         }
     }
 
-    /// The plan as it reads next to the Codex title. Same normalization as the Claude tier.
+    /// The plan's own display name from `accounts/check` ("Business Premium"), which carries the
+    /// seat type that the raw `plan_type` does not. Empty until fetched.
+    @Published var codexPlanDisplayName: String {
+        didSet {
+            guard codexPlanDisplayName != oldValue else { return }
+            defaults.set(codexPlanDisplayName, forKey: "codex.planDisplayName")
+        }
+    }
+
+    /// The plan as it reads next to the Codex title. The account's own display name when known,
+    /// otherwise the raw plan id normalized like the Claude tier.
     var codexPlanLabel: String {
+        let display = codexPlanDisplayName.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !display.isEmpty { return display }
         // The API's internal SKU names carry billing qualifiers the user never sees on
         // chatgpt.com, e.g. "self_serve_business_prolite" is just the Business plan
         let plan = codexPlanType.lowercased()
@@ -830,7 +875,9 @@ class UserSettings: ObservableObject {
         }
 
         self.claudeSubscriptionTier = defaults.string(forKey: "claude.subscriptionTier") ?? ""
+        self.claudeRateLimitTier = defaults.string(forKey: "claude.rateLimitTier") ?? ""
         self.codexPlanType = defaults.string(forKey: "codex.planType") ?? ""
+        self.codexPlanDisplayName = defaults.string(forKey: "codex.planDisplayName") ?? ""
         
         // Load the refresh mode, smart by default
         if let modeString = defaults.string(forKey: "refreshMode"),

@@ -22,7 +22,13 @@ private enum PopoverMetrics {
     /// Padding above the title bar + the title row + the bottom padding.
     /// The bottom is deliberately tighter than the header-to-bars gap: the bars need air under the
     /// title, and any slack left over lands at the bottom, where it reads as dead space.
-    static let chromeHeight: CGFloat = 18 + 20 + 10
+    static let chromeHeight: CGFloat = 18 + 20 + bottomPadding
+    /// The bottom part of `chromeHeight`
+    static let bottomPadding: CGFloat = 10
+    /// Two provider mode stacks Codex under Claude: the gap above the hairline plus the hairline.
+    /// The Codex header brings its own 18 of top padding below it.
+    static let providerDividerTopGap: CGFloat = 16
+    static let providerDividerBlock: CGFloat = providerDividerTopGap + 1
     /// Empty states (signed out / error / loading) use a fixed height: an icon, copy and a button are taller than the bar list
     static let stateHeight: CGFloat = 210
     /// Extra breathing room above the "couldn't refresh" note, on top of the row spacing it
@@ -84,11 +90,9 @@ struct UsageDetailView: View {
     @State private var showUpdateNotification = false
     // Display mode toggle (false: reset time, true: time left)
     // Time left is the default: a countdown ("3d 12h left") is more direct than an absolute timestamp ("Aug 24 2 AM"),
-    // because the user does not have to work out the difference. Note that UserDefaults.bool(forKey:) cannot be used here: it returns
-    // false for a missing key, which would flip this default back to reset time.
-    @AppStorage("showRemainingMode") private var savedRemainingMode = true
-    @State private var showRemainingMode =
-        (UserDefaults.standard.object(forKey: "showRemainingMode") as? Bool) ?? true
+    // because the user does not have to work out the difference. Tapping the bars flips to reset times as a peek only:
+    // it is not persisted, so a stray click cannot leave every later popover showing dates.
+    @State private var showRemainingMode = true
     
     // MARK: - Body
 
@@ -173,29 +177,25 @@ struct UsageDetailView: View {
             + PopoverMetrics.rowsHeight(codexRowCount(for: codexUsageData))
     }
 
-    /// Height in dual provider mode (the taller of the two columns)
+    /// Height in dual provider mode: Claude stacked over Codex. Each section is its single provider
+    /// height minus the shared bottom padding, joined by the divider block, with the bottom padding
+    /// counted once.
     private var multiProviderHeight: CGFloat {
-        let claudeHeight = claudeColumnHeight
-
         let codexHeight: CGFloat = codexUsageData == nil
             ? PopoverMetrics.stateHeight
             : PopoverMetrics.chromeHeight + contentSpacing
                 + PopoverMetrics.rowsHeight(codexRowCount(for: codexUsageData))
 
-        return max(claudeHeight, codexHeight)
+        return (claudeColumnHeight - PopoverMetrics.bottomPadding)
+            + PopoverMetrics.providerDividerBlock
+            + codexHeight
     }
 
     /// Gap between the title row and the bars group. Fixed now: it used to tighten to 10 for two
     /// or more limits, which mattered when a 114pt ring sat under the title and does not any more.
     private var contentSpacing: CGFloat { 16 }
 
-    private var multiProviderDividerHeight: CGFloat {
-        max(35, multiProviderHeight - 28)
-    }
-
-    private var contentWidth: CGFloat {
-        isMultiProviderActive ? 580 : 290
-    }
+    private var contentWidth: CGFloat { 290 }
 
     private var contentHeight: CGFloat {
         if isMultiProviderActive {
@@ -535,24 +535,24 @@ struct UsageDetailView: View {
         }
     }
 
+    /// Claude on top, Codex below, in the same 290 width as single provider mode. The controls
+    /// sit on the top (Claude) header, where they are in single provider mode too.
     private func multiProviderBody(codex: CodexUsageData?) -> some View {
-        VStack(spacing: contentSpacing) {
-            HStack(alignment: .top, spacing: 0) {
-                VStack(spacing: contentSpacing) {
-                    headerView(provider: .claude, showsControls: false)
-                    claudeMainContent
-                }
-                .frame(width: 290, alignment: .top)
-
-                VStack(spacing: contentSpacing) {
-                    headerView(provider: .codex, showsControls: true)
-                    codexOnlyMainContent(codex: codex)
-                }
-                .frame(width: 290, alignment: .top)
+        VStack(spacing: 0) {
+            VStack(spacing: contentSpacing) {
+                headerView(provider: .claude, showsControls: true)
+                claudeMainContent
             }
-            .overlay(alignment: .center) {
-                ProviderDivider(height: multiProviderDividerHeight)
-                    .allowsHitTesting(false)
+
+            Rectangle()
+                .fill(Color.primary.opacity(0.08))
+                .frame(height: 1)
+                .padding(.horizontal, PopoverMetrics.horizontalPadding)
+                .padding(.top, PopoverMetrics.providerDividerTopGap)
+
+            VStack(spacing: contentSpacing) {
+                headerView(provider: .codex, showsControls: false)
+                codexOnlyMainContent(codex: codex)
             }
 
             updateNotificationView
@@ -578,7 +578,7 @@ struct UsageDetailView: View {
             var transaction = Transaction(animation: nil)
             transaction.disablesAnimations = true
             withTransaction(transaction) {
-                showRemainingMode = savedRemainingMode
+                showRemainingMode = true
             }
             // Start the spinner animation when a refresh is already running as this opens
             if refreshState.isRefreshing {
@@ -633,7 +633,6 @@ struct UsageDetailView: View {
         withAnimation(.spring(response: 0.42, dampingFraction: 0.78, blendDuration: 0.05)) {
             showRemainingMode.toggle()
         }
-        savedRemainingMode = showRemainingMode
     }
 }
 

@@ -42,6 +42,8 @@ enum ClaudeTokenMirror {
         var refreshToken: String
         var expiresAt: Date?
         var subscriptionType: String
+        /// Optional so a mirror written before this field existed still decodes
+        var rateLimitTier: String?
         /// The Claude Code service name these tokens were originally read from
         var originService: String
         /// The Claude Code account name these tokens were originally read from
@@ -136,6 +138,7 @@ enum ClaudeTokenMirror {
             refreshToken: credentials.refreshToken,
             expiresAt: credentials.expiresAt,
             subscriptionType: credentials.subscriptionType,
+            rateLimitTier: credentials.rateLimitTier,
             originService: credentials.serviceName,
             originAccount: credentials.accountName
         ))

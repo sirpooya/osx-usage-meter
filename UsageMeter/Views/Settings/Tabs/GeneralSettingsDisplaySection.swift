@@ -73,10 +73,7 @@ struct GeneralSettingsDisplaySection: View {
     /// The description is the selected mode's own, so the card explains the current choice instead
     /// of listing all three and leaving the reader to work out which one applies.
     private var colorModePicker: some View {
-        SettingRow(
-            title: L.Display.colorMode,
-            description: colorMode.wrappedValue.description
-        ) {
+        SettingRow(title: L.Display.colorMode) {
             Picker("", selection: colorMode) {
                 ForEach(ColorMode.allCases) { mode in
                     Text(mode.title).tag(mode)
@@ -122,7 +119,6 @@ struct GeneralSettingsDisplaySection: View {
                 // Battery style display: remaining capacity instead of used percentage
                 SettingToggleRow(
                     title: L.Display.showRemaining,
-                    description: L.Display.showRemainingDesc,
                     isOn: $settings.showRemainingPercentage
                 )
 
@@ -131,7 +127,6 @@ struct GeneralSettingsDisplaySection: View {
                 // Time marker: a tick at how far through the period we are
                 SettingToggleRow(
                     title: L.Display.showTimeMarker,
-                    description: L.Display.showTimeMarkerDesc,
                     isOn: $settings.showTimeMarker
                 )
 

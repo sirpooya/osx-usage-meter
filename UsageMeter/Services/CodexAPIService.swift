@@ -363,6 +363,7 @@ class CodexAPIService {
                 // change shows up without a re-login
                 if let plan = usageResponse.plan_type, !plan.isEmpty {
                     DispatchQueue.main.async { UserSettings.shared.codexPlanType = plan }
+                    self.fetchPlanDisplayNameIfNeeded(accessToken: accessToken, planType: plan)
                 }
                 completion(.success(usageData))
             } catch {
@@ -371,6 +372,42 @@ class CodexAPIService {
             }
         }
 
+        trackTask(task)
+        task.resume()
+    }
+
+    /// The plan_type the display name was last fetched for, so it is fetched once per launch and
+    /// again only when the plan changes, not on every poll
+    private var displayNameFetchedForPlan: String?
+
+    /// The plan's own display name ("Business Premium"), which carries the seat type. wham/usage
+    /// only has the raw `plan_type` ("self_serve_business_prolite"), which does not say Standard or
+    /// Premium; `accounts/check` does, as `account.plan_display_name`.
+    private func fetchPlanDisplayNameIfNeeded(accessToken: String, planType: String) {
+        guard displayNameFetchedForPlan != planType,
+              let url = URL(string: "\(baseURL)/backend-api/accounts/check/v4-2023-04-27") else { return }
+        displayNameFetchedForPlan = planType
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.assumesHTTP3Capable = false
+        CodexAPIHeaderBuilder.applyUsageHeaders(to: &request, accessToken: accessToken)
+
+        let task = session.dataTask(with: request) { [weak self] data, response, _ in
+            guard let data,
+                  (response as? HTTPURLResponse)?.statusCode == 200,
+                  let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let accounts = json["accounts"] as? [String: Any] else {
+                self?.displayNameFetchedForPlan = nil   // try again on the next poll
+                return
+            }
+            // Prefer the account whose plan matches the one wham/usage reported, else "default"
+            let entries = accounts.values.compactMap { ($0 as? [String: Any])?["account"] as? [String: Any] }
+            let match = entries.first { $0["plan_type"] as? String == planType }
+                ?? ((accounts["default"] as? [String: Any])?["account"] as? [String: Any])
+            guard let name = match?["plan_display_name"] as? String, !name.isEmpty else { return }
+            DispatchQueue.main.async { UserSettings.shared.codexPlanDisplayName = name }
+        }
         trackTask(task)
         task.resume()
     }

@@ -194,7 +194,7 @@ final class ClaudeCodeSyncService: ObservableObject {
     }
 
     /// Fetch the profile to fill in the account display name, a failure does not abort the sync
-    private func fetchProfile(credentials: ClaudeCodeCredentials) async -> (email: String, orgId: String, orgName: String, tier: String)? {
+    private func fetchProfile(credentials: ClaudeCodeCredentials) async -> (email: String, orgId: String, orgName: String, tier: String, rateLimitTier: String)? {
         guard credentials.isAccessTokenUsable else { return nil }
         return await withCheckedContinuation { continuation in
             ClaudeOAuthService.fetchProfile(accessToken: credentials.accessToken) { result in
@@ -209,7 +209,7 @@ final class ClaudeCodeSyncService: ObservableObject {
     /// Create or update the CLI synced account
     private func upsertAccount(
         credentials: ClaudeCodeCredentials,
-        profile: (email: String, orgId: String, orgName: String, tier: String)?
+        profile: (email: String, orgId: String, orgName: String, tier: String, rateLimitTier: String)?
     ) {
         let settings = UserSettings.shared
         let email = profile?.email ?? ""
@@ -221,6 +221,11 @@ final class ClaudeCodeSyncService: ObservableObject {
         let tier = profileTier.isEmpty ? credentials.subscriptionType : profileTier
         if !tier.isEmpty {
             settings.claudeSubscriptionTier = tier
+        }
+        let profileRateTier = profile?.rateLimitTier ?? ""
+        let rateLimitTier = profileRateTier.isEmpty ? credentials.rateLimitTier : profileRateTier
+        if !rateLimitTier.isEmpty {
+            settings.claudeRateLimitTier = rateLimitTier
         }
         let displayName = email.isEmpty ? L.CLISync.defaultAccountName : email
         // Same dedupe identity as browser OAuth login: the organization uuid, falling back to the email,

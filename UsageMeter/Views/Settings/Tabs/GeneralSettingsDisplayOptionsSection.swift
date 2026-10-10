@@ -17,14 +17,12 @@ struct GeneralSettingsDisplayOptionsSection: View {
         SettingSection(
             icon: "rectangle.3.group",
             iconColor: .purple,
-            title: L.DisplayOptions.title,
-            hint: settings.displayMode == .smart ? L.DisplayOptions.smartDisplayDescription : L.DisplayOptions.customDisplayDescription
+            title: L.DisplayOptions.title
         ) {
             VStack(alignment: .leading, spacing: 16) {
                 // No "Display Mode:" label and no info glyph description row. The card's own
                 // header already says Display Options, and the two radios name themselves, so both
-                // only repeated what was on screen. The card's `hint` slot still carries the mode
-                // description, which is where a per-card explanation belongs.
+                // only repeated what was on screen. The mode description hint is gone for the same reason.
                 VStack(alignment: .leading, spacing: 8) {
                     Picker("", selection: $settings.displayMode) {
                         Text(L.DisplayOptions.smartDisplay).tag(DisplayMode.smart)
@@ -81,7 +79,6 @@ struct GeneralSettingsDisplayOptionsSection: View {
                         // flush description rather than a checkbox with an indented caption.
                         SettingToggleRow(
                             title: L.DisplayOptions.menuBarOnlyToggle,
-                            description: L.DisplayOptions.menuBarOnlyDescription,
                             isOn: $settings.customDisplayMenuBarOnly
                         )
                     }

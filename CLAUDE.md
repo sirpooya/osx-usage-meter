@@ -345,10 +345,11 @@ What has been changed from upstream so far:
       to the title, so a limit with no countdown does not print a trailing dot.
   - Bar colour still comes from the per-limit palette in `UsageColorScheme` and still escalates
     with the percentage, so the colour says both which limit it is and how close it is.
-  - `showRemainingMode` now defaults to **true**, so rows read "2d 7h left", not "Aug 24 2 AM".
-    Read the default with `object(forKey:) as? Bool ?? true`; `UserDefaults.bool(forKey:)`
-    returns false for a missing key and would silently flip it back. Tapping the list still
-    toggles to absolute reset times. Percentages always read as used, never as remaining.
+  - `showRemainingMode` defaults to **true**, so rows read "2d left", not "Aug 24 2 AM".
+    Tapping the list flips to absolute reset times as a **peek only**: it is no longer persisted
+    (the `showRemainingMode` defaults key is gone) and every popover open starts on countdowns.
+    A stray click had stored `false` and left every later popover on dates. Percentages always
+    read as used, never as remaining.
   - Countdowns run one unit coarser as the window gets longer: `45m left`, then `1h 11m left`
     under two hours, then **hours only** (`3h left`) up to a day, then **days only** (`2d left`)
     once a day is on the clock. Hours next to days were precision nobody acted on, and
@@ -369,7 +370,12 @@ What has been changed from upstream so far:
       implies. Rounding up would print `2d left` with 25h to go, promising time the user does not
       have.
     - No week unit: no limit window is longer than 7 days, so days is the largest useful one.
-  - Both columns use the same rows, so Claude and Codex line up in two-provider mode.
+  - **Two-provider mode stacks Codex under Claude** in the same 290 width as single provider
+    mode (it was two 290 columns side by side, 580 wide, with a vertical `ProviderDivider`).
+    A 1pt `primary` 0.08 hairline, inset 16, sits `PopoverMetrics.providerDividerTopGap` (16)
+    below Claude's rows; the Codex header brings its own 18 top padding. Refresh and gear sit on
+    the Claude header. Height is Claude's column minus `bottomPadding`, plus
+    `providerDividerBlock`, plus Codex's column. `ProviderDivider` is now unused but kept.
   - Popover height is computed in `PopoverMetrics` (row 26, row spacing 14, chrome 18 + 20 + 10,
     empty states 210) plus `contentSpacing`, the fixed 16 between the title row and the bars.
     The bottom is deliberately the tightest of the three gaps: leftover slack lands there and
@@ -449,7 +455,26 @@ What has been changed from upstream so far:
     `codexPlanLabel` and `claudeSubscriptionTierLabel` share one private `planLabel` formatter
     (Codex drops a `chatgpt_` prefix, Claude a `claude_` one; free/none/unknown stay empty).
     Codex also strips `self_serve_` and `_prolite`: this account reports
-    `self_serve_business_prolite`, which shows as "Business".
+    `self_serve_business_prolite`, which would show as "Business". That raw id does **not** say
+    Standard or Premium, so the label now prefers the account's own **`plan_display_name`**
+    ("Business Premium" on this machine) from `GET /backend-api/accounts/check/v4-2023-04-27`
+    (`accounts[<id>].account`, matched on `plan_type`, else `accounts.default`). Fetched by
+    `CodexAPIService.fetchPlanDisplayNameIfNeeded` once per launch and again only when
+    `plan_type` changes, cached in `UserSettings.codexPlanDisplayName` (`codex.planDisplayName`).
+    The raw id path is only the fallback. An earlier pass guessed "Business Standard" from the id
+    and was wrong: never infer a seat, read it.
+  - **The Claude tier carries the seat too**: "Claude Team Premium" / "Team Standard", or
+    "Max 5x" / "Max 20x" on a personal Max plan. Source is the rate limit tier, which is what
+    actually sizes the limits: `rateLimitTier` in Claude Code's Keychain entry
+    (`default_claude_max_5x` on this machine's Team seat) and `organization.rate_limit_tier` on
+    the profile (same value; `seat_tier` there reads an opaque `team_tier_1`, not used). Cached in
+    `UserSettings.claudeRateLimitTier` (`claude.rateLimitTier`), composed in
+    `claudeSubscriptionTierLabel` via `seatLabel`: Team/Enterprise with a `max_Nx` tier is
+    Premium, any other known tier Standard; Max prints the multiplier; Pro prints nothing extra.
+    Written at the same three points as the plan, plus `ClaudeTokenMirror.Mirrored.rateLimitTier`
+    (optional, so older mirrors decode). A mirror saved before this field existed is backfilled
+    once from `/api/oauth/profile` (`ClaudeAPIService.backfillRateLimitTier`, no Keychain read).
+    The profile tuple grew a 5th member, `rateLimitTier`, at all three sites.
   - Both take `.font(.headline)`, the tier overriding only the weight with `.fontWeight(.regular)`,
     so the two cannot drift apart in size. The tier was 12pt against the title's 13pt headline.
   - Title and tier sit in their own `HStack(spacing: 4)` inside the header row. Tightening the gap
@@ -704,6 +729,13 @@ What has been changed from upstream so far:
     right-hand column. This also confirmed the `SettingsView.contentSize` change actually reaches
     the window, which the earlier autosave note could not.
 - **General tab content, trimmed and reordered.** All UI-only; every underlying setting is kept.
+  - **No descriptions on the General tab any more**: removed the Launch at Login hint, the Color By
+    mode description (and so the per-mode `display.color_mode*_desc` lines), the Show Remaining and
+    Show Time Marker row descriptions, the Display Options smart/custom hint, the Refresh smart/fixed
+    hint, the Notifications hint and the menu-bar-only toggle's description. The keys and `L.*`
+    accessors stay, unused. The constraint and theme warnings under Display Options are kept.
+  - **Language section has no hint** ("Change the interface display language" was obvious from
+    the list). `settings.general.language_hint` / `L.SettingsGeneral.languageHint` unused but kept.
   - **Time Format card removed**, and `UserSettings` now loads `timeFormatPreference` as `.system`
     unconditionally, ignoring the stored key. Without that, an install that had 12 or 24 hour
     selected would be stuck there with no UI to change it; ignoring the key means everyone follows
