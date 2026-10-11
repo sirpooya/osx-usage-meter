@@ -81,13 +81,13 @@ final class SmartRefreshPolicy {
     private func calculateNewMode() -> MonitoringMode? {
         switch currentMode {
         case .active:
-            // Active mode: 3 rounds unchanged (3 minutes) -> short quiet
+            // Active mode: 3 rounds unchanged (9 minutes) -> short quiet
             return unchangedCount >= 3 ? .idleShort : nil
         case .idleShort:
-            // Short quiet: 6 rounds unchanged (18 minutes) -> medium quiet
+            // Short quiet: 6 rounds unchanged (30 minutes) -> medium quiet
             return unchangedCount >= 6 ? .idleMedium : nil
         case .idleMedium:
-            // Medium quiet: 12 rounds unchanged (60 minutes) -> long quiet
+            // Medium quiet: 12 rounds unchanged (2 hours) -> long quiet
             return unchangedCount >= 12 ? .idleLong : nil
         case .idleLong:
             // Long quiet: stay in the current mode

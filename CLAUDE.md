@@ -186,7 +186,7 @@ Fuse source 1 and source 2. Nobody in the field does this well, and it is the wh
   real-time movement between polls; unlimited retention.
 - Source 1 has no history (the endpoint only reports now). Persist every poll locally so trends
   exist. Source 2 has no server truth (misses usage from other devices, web, mobile).
-- Poll adaptively: ~60s while a session is active, back off to 5 to 10 min when idle. Respect
+- Poll adaptively: 3 min while active, back off to 5 to 15 min when idle (60s drew 429s). Respect
   429s with real backoff. Never poll faster than 30s.
 - Menu bar collapsed state shows the `is_active` limit. Popover shows all limits plus history.
 
@@ -441,6 +441,13 @@ What has been changed from upstream so far:
   - A 429 also arms a 10 minute backoff (`claudeBackoffUntil`): automatic polls sit it out, the
     Refresh button ignores it because the user asked. Skipping a poll never clears the cached data.
   - A Codex failure keeps its last data too (it used to call `clearCodexUsageState`).
+- **Smart refresh slowed down to stop the 429s (2026-10-11).** The usage endpoint rate limits per
+  access token, and the token is shared with Claude Code, which polls the same endpoint from every
+  open session, so our 60s active poll kept tipping it over ("Couldn't refresh" notice).
+  `MonitoringMode` intervals are now 3 / 5 / 10 / 15 min (were 1 / 3 / 5 / 10), popover open only
+  refetches after 2 min (was 30s), and the 429 backoff grows 5, 10, 20, 30 min (cap) per
+  consecutive 429, reset on success (was a flat 10). Retry-After is ignored on purpose: reported
+  as 0 while still limiting. Manual Refresh still bypasses the backoff.
 - The popover header's ellipsis menu is now a gear that opens Settings directly. Everything that
   menu carried (account switching, check for updates, About, status pages, Buy me a coffee, Quit)
   is still on the status item's right click menu, `MenuBarUI.createStandardMenu`. The update dot

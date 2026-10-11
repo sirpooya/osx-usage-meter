@@ -67,9 +67,14 @@ class DataRefreshManager: ObservableObject {
     /// While set, automatic polls are skipped: the server told us to back off (429).
     /// Manual refreshes still go through, because the user explicitly asked.
     private var claudeBackoffUntil: Date?
-    /// How long to sit out after a 429. The endpoint's own window is not exposed, so this is a
-    /// deliberately unaggressive guess. Never poll faster than this after being told to stop.
-    private let rateLimitBackoff: TimeInterval = 10 * 60
+    /// How long to sit out after a 429: 5 min, doubling per consecutive 429, capped at 30 min.
+    /// The endpoint's own window is not exposed and its Retry-After is reported unreliable (0 while
+    /// still limiting), so it grows instead of retrying into the same wall every 10 minutes.
+    private var rateLimitBackoff: TimeInterval {
+        min(5 * 60 * pow(2, Double(max(consecutiveRateLimits - 1, 0))), 30 * 60)
+    }
+    /// 429s in a row since the last successful Claude fetch
+    private var consecutiveRateLimits = 0
     /// UserDefaults keys for the last good snapshot, so a cold start has something to show
     private let cachedUsageKey = "cachedClaudeUsage"
     private let cachedUsageAtKey = "cachedClaudeUsageAt"
@@ -222,6 +227,7 @@ class DataRefreshManager: ObservableObject {
                     self.refreshState.lastUpdatedAt = Date()
                     self.refreshState.claudeErrorIsTransient = false
                     self.claudeBackoffUntil = nil
+                    self.consecutiveRateLimits = 0
                     self.persistCachedUsage(data)
                     UsageHistoryStore.shared.record(data)
                     monitoringUtilizations[.claude] = data.percentage
@@ -246,6 +252,7 @@ class DataRefreshManager: ObservableObject {
                     self.errorMessage = error.localizedDescription
                     self.refreshState.claudeErrorIsTransient = Self.isTransient(error)
                     if Self.isRateLimit(error) {
+                        self.consecutiveRateLimits += 1
                         self.claudeBackoffUntil = Date().addingTimeInterval(self.rateLimitBackoff)
                         Logger.menuBar.info("Claude API rate limited. Pausing automatic polls for \(Int(self.rateLimitBackoff / 60)) min")
                     }
@@ -377,11 +384,11 @@ class DataRefreshManager: ObservableObject {
     // MARK: - Smart Refresh
 
     /// Smart refresh when the popover opens
-    /// Refreshes immediately when the last refresh was more than 30 seconds ago
+    /// Refreshes immediately when the last refresh was more than 2 minutes ago
     func refreshOnPopoverOpen() {
         let now = Date()
 
-        // The user opened the detail UI, so force active mode (1 minute refresh)
+        // The user opened the detail UI, so force active mode (3 minute refresh)
         if settings.refreshMode == .smart {
             let wasIdle = settings.currentMonitoringMode != .active
             settings.currentMonitoringMode = .active
@@ -396,9 +403,10 @@ class DataRefreshManager: ObservableObject {
             }
         }
 
-        // Skip when the last refresh was less than 30 seconds ago
+        // Skip when the last refresh was less than 2 minutes ago: every popover open would
+        // otherwise spend a request against the same rate limit as the poll timer
         if let lastFetch = lastAPIFetchTime,
-           now.timeIntervalSince(lastFetch) < 30 {
+           now.timeIntervalSince(lastFetch) < 120 {
             return
         }
 
@@ -416,7 +424,7 @@ class DataRefreshManager: ObservableObject {
             return
         }
 
-        // The user refreshed on purpose, so force active mode (1 minute refresh)
+        // The user refreshed on purpose, so force active mode (3 minute refresh)
         if settings.refreshMode == .smart {
             let wasIdle = settings.currentMonitoringMode != .active
             settings.currentMonitoringMode = .active
