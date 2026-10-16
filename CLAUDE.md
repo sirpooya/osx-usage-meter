@@ -1046,6 +1046,11 @@ What has been changed from upstream so far:
   `getActiveDisplayTypes`' custom branch now drops `.codexPrimary` once Codex data has arrived
   without it (kept while still loading). Smart mode already did this. One filter covers the popover
   column, its height (`codexRowCount`) and the menu bar, since every Codex call site passes the data.
+  - **An empty Codex section is dropped from the popover.** With that filter, ticking only Codex
+    5-Hour (or no Codex box at all) left the popover a bare "Codex Business Premium" header with
+    no rows under it. `UsageDetailView.codexHasNoRows` (Codex and Claude data both present, zero
+    active Codex types) now makes `isMultiProviderActive` false, so the popover renders Claude only.
+    The menu bar already handled it: `createMultiProviderIcon` skips an empty Codex group.
 - **The Color By picker sits in a `SettingRow`**, label left and segments right with the
   description underneath, the same shape as every switch in that card. Stacked full width under
   its own heading it read as a different kind of setting from its neighbours and left the row's

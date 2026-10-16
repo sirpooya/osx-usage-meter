@@ -99,6 +99,14 @@ struct UsageDetailView: View {
     private var isMultiProviderActive: Bool {
         UserSettings.shared.isMultiProviderActive
             && (codexUsageData != nil || codexErrorMessage != nil || UserSettings.shared.hasValidCodexCredentials)
+            && !codexHasNoRows
+    }
+
+    /// Codex data has arrived but none of the selected Codex limits exist in it, e.g. only the
+    /// 5-Hour box ticked on a plan with no 5 hour window, or no Codex box ticked at all. The
+    /// section would be a bare header, so the popover drops to Claude only instead.
+    private var codexHasNoRows: Bool {
+        codexUsageData != nil && usageData != nil && activeCodexDisplayTypes.isEmpty
     }
 
     private var isCodexOnlyActive: Bool {
