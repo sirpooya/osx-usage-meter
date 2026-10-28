@@ -138,6 +138,7 @@
 "display.pace_aware_colors_desc" = "현재 사용량이 아니라 예상 속도를 기준으로 막대를 색칠합니다. 기간이 끝날 때까지 한도에 도달할지 예측합니다.";
 "display.show_time_marker" = "시간 마커 표시";
 "display.show_time_marker_desc" = "기간이 얼마나 지났는지 보여주는 표시를 막대에 나타냅니다";
+"display.compact_menu_bar" = "간결한 메뉴 막대";
 
 /* The three mutually exclusive bar / icon coloring modes */
 "display.color_mode" = "색상 기준";

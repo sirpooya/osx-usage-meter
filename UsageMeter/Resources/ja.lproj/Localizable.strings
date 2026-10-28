@@ -138,6 +138,7 @@
 "display.pace_aware_colors_desc" = "現在の使用量ではなく予測ペースに基づいてバーを色分けします。期間の終わりまでにリミットに達するかを予測します。";
 "display.show_time_marker" = "タイムマーカーを表示";
 "display.show_time_marker_desc" = "期間のどこまで進んでいるかを示す目印をバーに表示します";
+"display.compact_menu_bar" = "コンパクトなメニューバー";
 
 /* The three mutually exclusive bar / icon coloring modes */
 "display.color_mode" = "色の基準";

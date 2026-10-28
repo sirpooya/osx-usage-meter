@@ -130,7 +130,7 @@ class MenuBarIconRenderer {
 
         case .percentageOnly, .both:
             // Claude part
-            let claudeIcons = claudeTypes.compactMap { createIconForType($0, data: data, isMonochrome: isMonochrome, button: button) }
+            let claudeIcons = stackedColumns(claudeTypes.compactMap { createIconForType($0, data: data, isMonochrome: isMonochrome, button: button) })
             if !claudeIcons.isEmpty {
                 if settings.iconDisplayMode == .both {
                     let iconName = isMonochrome ? "AppIconReverse" : "AppIcon"
@@ -142,7 +142,7 @@ class MenuBarIconRenderer {
             }
 
             // Codex part
-            let codexIcons = buildCodexIcons(codex: codex, types: codexTypes, isMonochrome: isMonochrome, button: button)
+            let codexIcons = stackedColumns(buildCodexIcons(codex: codex, types: codexTypes, isMonochrome: isMonochrome, button: button))
             if !codexIcons.isEmpty {
                 // With Claude's rings in front, a dot alone separates the groups in both
                 // modes; the Codex brand icon only appears when it would otherwise lead the bar.
@@ -160,7 +160,7 @@ class MenuBarIconRenderer {
             icons.append(createMenuBarDividerIcon(isMonochrome: isMonochrome))
         }
 
-        let combined = icons.isEmpty ? createSimpleCircleIcon() : combineIcons(icons, spacing: 2.0, height: metricIconSize)
+        let combined = icons.isEmpty ? createSimpleCircleIcon() : combineIcons(icons, spacing: figureSpacing(2.0), height: metricIconSize)
         combined.isTemplate = isMonochrome
         return combined
     }
@@ -185,9 +185,9 @@ class MenuBarIconRenderer {
                let brand = createProviderBrandIcon(.codex, isMonochrome: isMonochrome, size: providerBrandIconSize) {
                 icons.append(brand)
             }
-            icons.append(contentsOf: buildCodexIcons(codex: codex, types: codexTypes, isMonochrome: isMonochrome, button: button))
+            icons.append(contentsOf: stackedColumns(buildCodexIcons(codex: codex, types: codexTypes, isMonochrome: isMonochrome, button: button)))
             if icons.isEmpty { return createSimpleCircleIcon() }
-            let combined = icons.count == 1 ? icons[0] : combineIcons(icons, spacing: 3.0, height: metricIconSize)
+            let combined = icons.count == 1 ? icons[0] : combineIcons(icons, spacing: figureSpacing(3.0), height: metricIconSize)
             combined.isTemplate = isMonochrome
             return combined
         }
@@ -244,9 +244,9 @@ class MenuBarIconRenderer {
         }
 
         // Create an icon for each type
-        let icons = types.compactMap { type in
+        let icons = stackedColumns(types.compactMap { type in
             createIconForType(type, data: data, isMonochrome: isMonochrome, button: button)
-        }
+        })
 
         // Combine the icons
         if icons.isEmpty {
@@ -254,7 +254,7 @@ class MenuBarIconRenderer {
         } else if icons.count == 1 {
             return icons[0]
         } else {
-            let combined = combineIcons(icons, spacing: 3.0, height: 18)
+            let combined = combineIcons(icons, spacing: figureSpacing(3.0), height: 18)
             combined.isTemplate = isMonochrome
             return combined
         }
@@ -274,15 +274,15 @@ class MenuBarIconRenderer {
         }
 
         // Create the percentage icon
-        let percentageIcons = types.compactMap { type in
+        let percentageIcons = stackedColumns(types.compactMap { type in
             createIconForType(type, data: data, isMonochrome: isMonochrome, button: button)
-        }
+        })
 
         // Combine app icon and percentage icon
         var allIcons = [appIconCopy]
         allIcons.append(contentsOf: percentageIcons)
 
-        let combined = combineIcons(allIcons, spacing: 3.0, height: metricIconSize)
+        let combined = combineIcons(allIcons, spacing: figureSpacing(3.0), height: metricIconSize)
         combined.isTemplate = isMonochrome
         return combined
     }
@@ -627,6 +627,12 @@ class MenuBarIconRenderer {
         // In smart mode return nil when the data is nil
         let showPlaceholder = settings.displayMode == .custom
 
+        if settings.compactMenuBar {
+            guard let reading = claudeReading(type, data: data, showPlaceholder: showPlaceholder) else { return nil }
+            let color = isMonochrome ? nil : compactTextColor(type, percentage: reading.percentage, resetsAt: reading.resetsAt, button: button)
+            return createPercentageTextImage(percentage: reading.percentage, color: color)
+        }
+
         switch type {
         case .fiveHour:
             let percentage = data.fiveHour?.percentage ?? (showPlaceholder ? 0 : nil)
@@ -697,6 +703,11 @@ class MenuBarIconRenderer {
         // Pace-aware colours escalate on the projection; the sweep and glyph stay on actual usage
         let paced = colorPercentage(percentage, resetsAt: resetsAt, type: type)
 
+        if settings.compactMenuBar {
+            let color = isMonochrome ? nil : compactTextColor(type, percentage: percentage, resetsAt: resetsAt, button: button)
+            return createPercentageTextImage(percentage: percentage, color: color)
+        }
+
         switch type {
         case .codexPrimary:
             if isMonochrome {
@@ -722,6 +733,107 @@ class MenuBarIconRenderer {
         default:
             return nil
         }
+    }
+
+    // MARK: - Compact Menu Bar
+
+    /// Spacing between neighbouring images: the ring layouts' own value, or the compact style's.
+    private func figureSpacing(_ ringSpacing: CGFloat) -> CGFloat {
+        settings.compactMenuBar ? CGFloat(CompactMenuBarStyle.shared.spacing) : ringSpacing
+    }
+
+    /// The figure a Claude limit shows, and when it resets. nil when there is nothing to show,
+    /// with the same placeholder rule as the ring icons (custom mode shows 0).
+    private func claudeReading(_ type: LimitType, data: UsageData, showPlaceholder: Bool) -> (percentage: Double, resetsAt: Date?)? {
+        let limit: UsageData.LimitData?
+        switch type {
+        case .fiveHour: limit = data.fiveHour
+        case .sevenDay: limit = data.sevenDay
+        case .opusWeekly: limit = data.opus
+        case .sonnetWeekly: limit = data.sonnet
+        case .extraUsage:
+            if let extra = data.extraUsage, extra.enabled, let percentage = extra.percentage {
+                return (percentage, nil)
+            }
+            return showPlaceholder ? (0, nil) : nil
+        case .codexPrimary, .codexSecondary, .codexExtraUsage:
+            return nil
+        }
+        if let limit { return (limit.percentage, limit.resetsAt) }
+        return showPlaceholder ? (0, nil) : nil
+    }
+
+    /// The colour the limit's ring would be stroked in, so Color By means the same thing with
+    /// or without rings: Category names the limit, Usage ramps blue / amber / red.
+    private func compactTextColor(_ type: LimitType, percentage: Double, resetsAt: Date?, button: NSStatusBarButton?) -> NSColor {
+        let paced = colorPercentage(percentage, resetsAt: resetsAt, type: type)
+        let pace = paceColor(percentage, resetsAt: resetsAt, type: type)
+        switch type {
+        case .fiveHour: return pace ?? UsageColorScheme.fiveHourColorAdaptive(paced, for: button)
+        case .sevenDay: return pace ?? UsageColorScheme.sevenDayColorAdaptive(paced, for: button)
+        case .opusWeekly: return pace ?? UsageColorScheme.opusWeeklyColorAdaptive(paced, for: button)
+        case .sonnetWeekly: return pace ?? UsageColorScheme.sonnetWeeklyColorAdaptive(paced, for: button)
+        case .extraUsage: return pace ?? UsageColorScheme.extraUsageColorAdaptive(UsageColorScheme.flatPercentage, for: button)
+        // Codex rings escalate through their own palette rather than the pace ramp; match them
+        case .codexPrimary: return UsageColorScheme.codexPrimaryColorAdaptive(paced, for: button)
+        case .codexSecondary: return UsageColorScheme.codexSecondaryColorAdaptive(paced, for: button)
+        case .codexExtraUsage: return pace ?? UsageColorScheme.codexExtraUsageColorAdaptive(UsageColorScheme.flatPercentage, for: button)
+        }
+    }
+
+    /// Stacked compact layout: pairs of figures become one column, first on top, right aligned so
+    /// the digits line up. A lone figure stays a column of one, centred by `combineIcons`.
+    /// Anything other than the stacked layout passes straight through.
+    private func stackedColumns(_ icons: [NSImage]) -> [NSImage] {
+        let style = CompactMenuBarStyle.shared
+        guard settings.compactMenuBar, style.stacked, icons.count > 1 else { return icons }
+        let gap = CGFloat(style.lineGap)
+        return stride(from: 0, to: icons.count, by: 2).map { start in
+            let pair = Array(icons[start..<min(start + 2, icons.count)])
+            guard pair.count == 2 else { return pair[0] }
+            let top = pair[0], bottom = pair[1]
+            let width = max(top.size.width, bottom.size.width)
+            let column = NSImage(size: NSSize(width: width, height: top.size.height + gap + bottom.size.height))
+            column.lockFocus()
+            bottom.draw(at: NSPoint(x: width - bottom.size.width, y: 0), from: .zero, operation: .sourceOver, fraction: 1)
+            top.draw(at: NSPoint(x: width - top.size.width, y: bottom.size.height + gap), from: .zero, operation: .sourceOver, fraction: 1)
+            column.unlockFocus()
+            column.isTemplate = top.isTemplate
+            return column
+        }
+    }
+
+    /// Compact style: the figure alone as text, no ring or shape around it.
+    /// - Parameter color: literal text colour, or nil for a template (monochrome) image
+    private func createPercentageTextImage(percentage: Double, color: NSColor?) -> NSImage {
+        let style = CompactMenuBarStyle.shared
+        // Battery style display flips the figure exactly as it does inside a ring
+        let displayPercentage = UsagePercentDisplay.displayPercentage(percentage)
+        let text = "\(Int(displayPercentage))" + (style.showPercentSign ? "%" : "")
+        // Monospaced digits, so the item does not shuffle its neighbours as a figure ticks over
+        let font = NSFont.monospacedDigitSystemFont(ofSize: CGFloat(style.activeFontSize), weight: style.weight)
+        // Template keeps only alpha, so black; colour mode is literal
+        let attrs: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: color ?? NSColor.black]
+        let textSize = text.size(withAttributes: attrs)
+
+        let size: NSSize
+        let origin: NSPoint
+        if style.stacked {
+            // Cropped to the digits (baseline to cap height, which "%" shares), so the line gap
+            // is measured between glyphs rather than between line boxes with their padding
+            size = NSSize(width: ceil(textSize.width), height: ceil(font.capHeight))
+            origin = NSPoint(x: 0, y: font.descender)
+        } else {
+            size = NSSize(width: ceil(textSize.width), height: max(metricIconSize, ceil(textSize.height)))
+            origin = NSPoint(x: 0, y: (size.height - textSize.height) / 2)
+        }
+
+        let image = NSImage(size: size)
+        image.lockFocus()
+        text.draw(at: origin, withAttributes: attrs)
+        image.unlockFocus()
+        image.isTemplate = color == nil
+        return image
     }
 
     /// Create the light separator icon (used by the "no icon" mode)

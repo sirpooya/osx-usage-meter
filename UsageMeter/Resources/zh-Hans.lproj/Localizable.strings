@@ -138,6 +138,7 @@
 "display.pace_aware_colors_desc" = "根据预测速度而不是当前用量为进度条着色，预测在本周期结束前是否会达到上限。";
 "display.show_time_marker" = "显示时间标记";
 "display.show_time_marker_desc" = "在进度条上显示一个刻度，标示当前周期已过去多少";
+"display.compact_menu_bar" = "紧凑菜单栏";
 
 /* The three mutually exclusive bar / icon coloring modes */
 "display.color_mode" = "着色依据";

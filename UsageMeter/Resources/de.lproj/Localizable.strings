@@ -137,6 +137,7 @@
 "display.pace_aware_colors_desc" = "Balken nach dem prognostizierten Tempo statt nach dem aktuellen Verbrauch einfärben. Sagt voraus, ob die Limits bis zum Periodenende erreicht werden.";
 "display.show_time_marker" = "Zeitmarkierung anzeigen";
 "display.show_time_marker_desc" = "Zeigt auf den Balken eine Markierung, die angibt, wie weit die Periode fortgeschritten ist";
+"display.compact_menu_bar" = "Kompakte Menüleiste";
 
 /* The three mutually exclusive bar / icon coloring modes */
 "display.color_mode" = "Farbe nach";

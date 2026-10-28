@@ -534,6 +534,14 @@ class UserSettings: ObservableObject {
         }
     }
 
+    /// Compact menu bar: each limit is its percentage as plain text, with no ring or shape around it.
+    @Published var compactMenuBar: Bool {
+        didSet {
+            defaults.set(compactMenuBar, forKey: "compactMenuBar")
+            NotificationCenter.default.post(name: .settingsChanged, object: nil)
+        }
+    }
+
     /// Pace-aware bar colours: escalate on the projected end-of-window figure rather than on
     /// current usage, so the colour answers "will I hit the cap" instead of "where am I now".
     @Published var paceAwareBarColors: Bool {
@@ -943,6 +951,9 @@ class UserSettings: ObservableObject {
         // Load the time marker, off by default
         self.showTimeMarker = defaults.bool(forKey: "showTimeMarker")
 
+        // Load the compact menu bar, off (rings) by default
+        self.compactMenuBar = defaults.bool(forKey: "compactMenuBar")
+
         // Launch at login loading moved into LaunchAtLoginManager.init()
 
         // MARK: - Initialize the debug mode settings
@@ -1045,6 +1056,7 @@ class UserSettings: ObservableObject {
         showRemainingPercentage = false
         paceAwareBarColors = false
         showTimeMarker = false
+        compactMenuBar = false
         refreshMode = .smart
         refreshInterval = 180  // 3 minutes by default in fixed mode
         language = Self.detectSystemLanguage()

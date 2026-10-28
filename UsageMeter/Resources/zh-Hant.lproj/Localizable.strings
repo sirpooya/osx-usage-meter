@@ -138,6 +138,7 @@
 "display.pace_aware_colors_desc" = "根據預測速度而不是目前用量為進度條著色，預測在本週期結束前是否會達到上限。";
 "display.show_time_marker" = "顯示時間標記";
 "display.show_time_marker_desc" = "在進度條上顯示一個刻度，標示目前週期已過去多少";
+"display.compact_menu_bar" = "精簡選單列";
 
 /* The three mutually exclusive bar / icon coloring modes */
 "display.color_mode" = "著色依據";

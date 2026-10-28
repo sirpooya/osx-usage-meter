@@ -132,6 +132,14 @@ struct GeneralSettingsDisplaySection: View {
 
                 Divider()
 
+                // Compact: percentages as plain text in the menu bar, no rings
+                SettingToggleRow(
+                    title: L.Display.compactMenuBar,
+                    isOn: $settings.compactMenuBar
+                )
+
+                Divider()
+
                 // Display content picker, last in the section
                 VStack(alignment: .leading, spacing: 8) {
                     // Same face as the toggle row titles above, so it reads as a peer

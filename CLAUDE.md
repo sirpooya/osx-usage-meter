@@ -1135,6 +1135,35 @@ What has been changed from upstream so far:
     `usageHistory.lastRecordedAt` / `lastBillingRecordedAt` throttle keys; on the clean
     relaunch the store recorded its first real snapshot within seconds.
 
+- **Compact Menu Bar: `compactMenuBar`.** New `UserSettings` flag (default off, key
+  `compactMenuBar`, posts `.settingsChanged`), a **Compact Menu Bar** switch in Display Settings
+  (`display.compact_menu_bar`, all 7 locales). When on, every limit in the menu bar is its
+  percentage as plain text ("0% 52% · 17%"), no ring or shape.
+  - One branch at the top of `createIconForType` and `createCodexIcon` in `MenuBarIconRenderer`,
+    so every layout (Claude only, Codex only, both, with or without the app icon) gets it.
+    `claudeReading` resolves the figure with the rings' placeholder rule; `figureSpacing` swaps
+    the ring spacing at all four `combineIcons` sites.
+  - Text colour is the colour the ring would have been stroked in (`compactTextColor`), so Color By
+    still means the same thing: Category names the limit, Usage ramps, Monochrome is a template.
+    Battery mode flips the figure as it does in a ring. Monospaced digits so the item does not
+    shuffle as a figure ticks. The time marker has nothing to draw on and is ignored.
+  - **Stacked layout (the default)**: each provider's figures go two to a column at 9pt, first
+    limit on top, right aligned so the digits line up; a third limit starts the next column and a
+    lone figure is centred. `stackedColumns` does it on the finished text images at all four
+    layout sites, and stacked text images are cropped to baseline-to-cap-height so `lineGap` (2pt)
+    is measured between glyphs. Inline (one row, 13pt) is the other `Layout` choice.
+  - Style lives in `Helpers/CompactMenuBarStyle.swift` (layout Stacked, 9pt stacked / 13pt
+    inline, Medium, spacing 6, line gap 2, % sign on), shipped in Release too because the renderer
+    reads it. Saved as one JSON blob
+    (`usagemeter.compactMenuBarStyle`, decoded key by key); every change posts `.settingsChanged`,
+    so the real status item redraws live. `cacheToken` is part of `generateCacheKey`.
+  - **Compact Menu Bar Playground** (`Views/Playground/CompactMenuBarPlayground.swift`, DEBUG only):
+    dark and light bar strips rendered through the real renderer on mock data (1x and zoomed),
+    knobs for the style, the real Compact / Color By / Show Icon / Show Remaining settings, and
+    mock figures. Opened from a DEBUG-only "Compact Menu Bar Playground" item on the status item's
+    right click menu, or at launch with
+    `defaults write in.pooya.usagemeter openCompactPlaygroundAtLaunch -bool true`.
+
 Deliberately **not** translated, because doing so breaks non-English locales:
 
 - CJK date format patterns in `TimeFormatHelper.swift` and `UsageData+Formatting.swift`

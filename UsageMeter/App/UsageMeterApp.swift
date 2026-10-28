@@ -122,6 +122,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 self?.menuBarManager.openWelcomeSetupPlayground()
             }
         }
+        // Same, for `openCompactPlaygroundAtLaunch`
+        if UserDefaults.standard.bool(forKey: "openCompactPlaygroundAtLaunch") {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
+                self?.menuBarManager.openCompactMenuBarPlayground()
+            }
+        }
         #endif
 
         // Before the login window, try to adopt the account Claude Code CLI already signed in.

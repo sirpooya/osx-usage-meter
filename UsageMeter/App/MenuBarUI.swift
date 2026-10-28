@@ -377,6 +377,17 @@ class MenuBarUI {
 
         menu.addItem(updateItem)
 
+        #if DEBUG
+        menu.addItem(NSMenuItem.separator())
+        let playgroundItem = NSMenuItem(
+            title: "Compact Menu Bar Playground",
+            action: #selector(MenuBarManager.openCompactMenuBarPlayground),
+            keyEquivalent: ""
+        )
+        playgroundItem.target = target
+        menu.addItem(playgroundItem)
+        #endif
+
         menu.addItem(NSMenuItem.separator())
 
         // Quit
@@ -626,7 +637,8 @@ class MenuBarUI {
     private func generateCacheKey(usageData: UsageData?, codexUsageData: CodexUsageData? = nil, hasUpdate: Bool) -> String {
         let isMulti = settings.isMultiProviderActive
         // The remaining/used display flips the rendered glyph and sweep without changing the data, so it has to be part of the key
-        let remainingFlag = settings.showRemainingPercentage ? "_rem" : ""
+        let remainingFlag = (settings.showRemainingPercentage ? "_rem" : "")
+            + (settings.compactMenuBar ? CompactMenuBarStyle.shared.cacheToken : "")
 
         // The period tick moves with the clock, not with the data, so a key built only from
         // percentages would keep serving the old image and freeze the tick in place. Quantised to

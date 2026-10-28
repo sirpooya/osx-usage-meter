@@ -138,6 +138,7 @@
 "display.pace_aware_colors_desc" = "Colorer les barres selon le rythme projeté au lieu de l'utilisation actuelle. Prévoit si les limites seront atteintes avant la fin de la période.";
 "display.show_time_marker" = "Afficher le repère de temps";
 "display.show_time_marker_desc" = "Affiche sur les barres un repère indiquant où vous en êtes dans la période";
+"display.compact_menu_bar" = "Barre des menus compacte";
 
 /* The three mutually exclusive bar / icon coloring modes */
 "display.color_mode" = "Couleur selon";

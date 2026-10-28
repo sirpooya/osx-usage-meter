@@ -138,6 +138,7 @@
 "display.pace_aware_colors_desc" = "Color progress bars based on projected pace instead of current usage level. Projects whether you'll hit limits by the end of the period.";
 "display.show_time_marker" = "Show Time Marker";
 "display.show_time_marker_desc" = "Display a tick mark on progress bars showing how far through the time period you are";
+"display.compact_menu_bar" = "Compact Menu Bar";
 
 /* The three mutually exclusive bar / icon coloring modes */
 "display.color_mode" = "Color By";

@@ -235,6 +235,7 @@ enum L {
         static var paceAwareColorsDesc: String { localized("display.pace_aware_colors_desc") }
         static var showTimeMarker: String { localized("display.show_time_marker") }
         static var showTimeMarkerDesc: String { localized("display.show_time_marker_desc") }
+        static var compactMenuBar: String { localized("display.compact_menu_bar") }
         // The three mutually exclusive bar / icon colouring modes, one picker
         static var colorMode: String { localized("display.color_mode") }
         static var colorModeType: String { localized("display.color_mode_type") }

@@ -59,6 +59,8 @@ class MenuBarManager: ObservableObject {
     #if DEBUG
     /// The dev-only playground window. Debug builds only, so it cannot reach a release build.
     private var playgroundWindow: NSWindow?
+    /// The compact menu bar playground window, debug builds only.
+    private var compactPlaygroundWindow: NSWindow?
     #endif
     /// User settings instance
     @ObservedObject private var settings = UserSettings.shared
@@ -444,6 +446,34 @@ class MenuBarManager: ObservableObject {
         NSApp.activate(ignoringOtherApps: true)
         playgroundWindow?.makeKeyAndOrderFront(nil)
         playgroundWindow?.center()
+    }
+
+    /// Opens the compact menu bar playground: style knobs for the text-only menu bar, live in the
+    /// real status item. Reached from the status item menu's "Compact Menu Bar Playground" item.
+    @objc func openCompactMenuBarPlayground() {
+        if compactPlaygroundWindow == nil {
+            NSApp.setActivationPolicy(.regular)
+
+            let controller = NSHostingController(rootView: CompactMenuBarPlaygroundView())
+            let window = NSWindow(contentViewController: controller)
+            window.title = "Compact Menu Bar Playground"
+            window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
+            window.setContentSize(NSSize(width: 900, height: 600))
+            window.setFrameAutosaveName("UsageMeter.CompactMenuBarPlayground")
+            window.isReleasedWhenClosed = false
+            compactPlaygroundWindow = window
+
+            NotificationCenter.default.addObserver(
+                forName: NSWindow.willCloseNotification,
+                object: window,
+                queue: .main
+            ) { [weak self] _ in
+                self?.compactPlaygroundWindow = nil
+            }
+        }
+
+        NSApp.activate(ignoringOtherApps: true)
+        compactPlaygroundWindow?.makeKeyAndOrderFront(nil)
     }
     #endif
 
