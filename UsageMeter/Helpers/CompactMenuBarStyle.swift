@@ -34,7 +34,7 @@ final class CompactMenuBarStyle: ObservableObject {
     /// Index into `weights`. Medium: regular reads thin next to the clock, semibold heavy.
     @Published var weightIndex: Int = 1 { didSet { changed() } }
     /// Gap between neighbouring figures, and either side of the Claude / Codex dot.
-    @Published var spacing: Double = 6 { didSet { changed() } }
+    @Published var spacing: Double = 4 { didSet { changed() } }
     /// Without the sign three bare numbers read as a list of anything.
     @Published var showPercentSign: Bool = true { didSet { changed() } }
 
@@ -87,7 +87,7 @@ final class CompactMenuBarStyle: ObservableObject {
         var stackedFontSize: Double = 9
         var lineGap: Double = 2
         var weightIndex: Int = 1
-        var spacing: Double = 6
+        var spacing: Double = 4
         var showPercentSign: Bool = true
 
         init() {}

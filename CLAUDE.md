@@ -1152,8 +1152,10 @@ What has been changed from upstream so far:
     lone figure is centred. `stackedColumns` does it on the finished text images at all four
     layout sites, and stacked text images are cropped to baseline-to-cap-height so `lineGap` (2pt)
     is measured between glyphs. Inline (one row, 13pt) is the other `Layout` choice.
+  - The Claude / Codex dot drops its 7pt slot to the bare 3pt dot in compact mode, so the gap
+    either side is just `spacing` (4pt, was 6 + 2 of slot padding).
   - Style lives in `Helpers/CompactMenuBarStyle.swift` (layout Stacked, 9pt stacked / 13pt
-    inline, Medium, spacing 6, line gap 2, % sign on), shipped in Release too because the renderer
+    inline, Medium, spacing 4, line gap 2, % sign on), shipped in Release too because the renderer
     reads it. Saved as one JSON blob
     (`usagemeter.compactMenuBarStyle`, decoded key by key); every change posts `.settingsChanged`,
     so the real status item redraws live. `cacheToken` is part of `generateCacheKey`.

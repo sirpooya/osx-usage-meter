@@ -861,9 +861,10 @@ class MenuBarIconRenderer {
 
     /// Create the dot that separates the Claude and Codex groups
     private func createMenuBarDotSeparatorIcon(isMonochrome: Bool, button: NSStatusBarButton?) -> NSImage {
-        let width: CGFloat = 7
-        let height: CGFloat = metricIconSize
         let diameter: CGFloat = 3
+        // Compact mode: no slot padding, the style's spacing alone sets the gap either side
+        let width: CGFloat = settings.compactMenuBar ? diameter : 7
+        let height: CGFloat = metricIconSize
         let image = NSImage(size: NSSize(width: width, height: height))
         image.lockFocus()
 
